@@ -1,0 +1,268 @@
+<odoo>
+  <data>
+    <menuitem id="menu_fotoapp_root" name="FotoApp" sequence="60" groups="base.group_user"/>
+
+    <record id="fotoapp_tienda_foto_event_list_partner" model="ir.ui.view">
+      <field name="name">tienda.foto.evento.list.partner</field>
+      <field name="model">tienda.foto.evento</field>
+      <field name="arch" type="xml">
+        <list string="Eventos del fotógrafo">
+          <field name="name"/>
+          <field name="fecha"/>
+          <field name="categoria_id"/>
+          <field name="estado"/>
+          <field name="website_published"/>
+          <field name="foto_count"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="fotoapp_res_partner_view_form" model="ir.ui.view">
+      <field name="name">res.partner.form.fotoapp</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//sheet/notebook/page[@name='sales_purchases']/group/group[1]" position="after">
+          <group string="Fotoapp">
+            <field name="is_photographer" widget="boolean_toggle"/>
+          </group>
+        </xpath>
+
+        <xpath expr="//sheet/notebook" position="inside">
+          <page string="Fotografía" name="fotoapp_photography">
+            <group>
+              <group>
+                <field name="is_photographer" widget="boolean_toggle"/>
+                <field name="photographer_bio"
+                       modifiers="{'invisible': [('is_photographer', '=', False)]}"
+                       placeholder="Describe brevemente la experiencia del fotógrafo"/>
+                <field name="portfolio_url"
+                       modifiers="{'invisible': [('is_photographer', '=', False)]}"
+                       placeholder="https://"/>
+              </group>
+              <group modifiers="{'invisible': [('is_photographer', '=', False)]}">
+                <field name="watermark_image" widget="image" class="oe_avatar"/>
+                <field name="watermark_opacity"/>
+                <field name="watermark_scale"/>
+              </group>
+            </group>
+
+            <group modifiers="{'invisible': [('is_photographer', '=', False)]}">
+              <field name="foto_event_ids"
+                readonly="1"
+                views="[(list, ref('fotoapp_tienda_foto_event_list_partner'))]"
+                options="{'no_create': True}">
+              </field>
+            </group>
+          </page>
+          <page string="Fiscal FotoApp" name="fotoapp_fiscal">
+            <group modifiers="{'invisible': [('is_photographer', '=', False)]}">
+              <group>
+                <field name="afip_cuit" placeholder="20-12345678-9"/>
+                <field name="afip_tax_condition"/>
+              </group>
+              <group>
+                <field name="afip_fiscal_address"/>
+                <field name="afip_preferred_pos" placeholder="0001"/>
+              </group>
+            </group>
+          </page>
+        </xpath>
+      </field>
+    </record>
+  </data>
+
+  <data noupdate="0">
+    <record id="view_tienda_foto_categoria_tree" model="ir.ui.view">
+      <field name="name">tienda.foto.categoria.list</field>
+      <field name="model">tienda.foto.categoria</field>
+      <field name="arch" type="xml">
+        <list string="Categorías de fotos">
+          <field name="name"/>
+          <field name="sequence"/>
+          <field name="estado"/>
+          <field name="website_published"/>
+          <field name="display_on_homepage"/>
+          <field name="event_count" string="# Eventos"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="view_tienda_foto_categoria_form" model="ir.ui.view">
+      <field name="name">tienda.foto.categoria.form</field>
+      <field name="model">tienda.foto.categoria</field>
+      <field name="arch" type="xml">
+        <form string="Categoría de fotos">
+          <sheet>
+            <group>
+              <group>
+                <field name="name" required="1"/>
+                <field name="description"/>
+                <field name="website_description" widget="html"/>
+                <field name="slug" readonly="1"/>
+              </group>
+              <group>
+                <field name="estado" widget="statusbar" statusbar_visible="borrador,publicado,archivado"/>
+                <field name="website_published"/>
+                <field name="display_on_homepage"/>
+                <field name="portal_sequence"/>
+                <field name="event_count" readonly="1"/>
+              </group>
+            </group>
+            <group>
+              <group>
+                <field name="image_cover" widget="image" class="oe_avatar"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_tienda_foto_categoria" model="ir.actions.act_window">
+      <field name="name">Categorías</field>
+      <field name="res_model">tienda.foto.categoria</field>
+      <field name="view_mode">list,form</field>
+      <field name="help" type="html">
+        <p>
+          Crea y administra las categorías disponibles en FotoApp. Estas categorías
+          se utilizan para organizar los eventos publicados en el portal.
+        </p>
+      </field>
+    </record>
+
+    <record id="view_fotoapp_plan_tree" model="ir.ui.view">
+      <field name="name">fotoapp.plan.tree</field>
+      <field name="model">fotoapp.plan</field>
+      <field name="arch" type="xml">
+        <list string="Planes de fotógrafos">
+          <field name="name"/>
+          <field name="code"/>
+          <field name="monthly_fee"/>
+          <field name="billing_interval"/>
+          <field name="storage_limit_mb"/>
+          <field name="commission_percent"/>
+          <field name="subscription_count"/>
+          <field name="website_published" widget="boolean_toggle"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="view_fotoapp_plan_form" model="ir.ui.view">
+      <field name="name">fotoapp.plan.form</field>
+      <field name="model">fotoapp.plan</field>
+      <field name="arch" type="xml">
+        <form string="Plan de fotógrafo">
+          <sheet>
+            <group>
+              <group>
+                <field name="name" required="1"/>
+                <field name="code" required="1"/>
+                <field name="sequence"/>
+                <field name="monthly_fee"/>
+                <field name="billing_interval"/>
+                <field name="commission_percent"/>
+                <field name="website_published" widget="boolean_toggle"/>
+              </group>
+              <group>
+                <field name="storage_limit_mb"/>
+                <field name="photo_limit"/>
+                <field name="album_limit"/>
+                <field name="event_limit"/>
+              </group>
+            </group>
+            <group>
+              <group>
+                <field name="description"/>
+                <field name="cover_image" widget="image" class="oe_avatar"/>
+              </group>
+              <group>
+                <field name="product_template_id" readonly="1"/>
+                <field name="product_variant_id" readonly="1"/>
+                <field name="subscription_template_id" readonly="1"/>
+                <field name="company_id"/>
+                <field name="journal_id"/>
+                <field name="income_account_id"/>
+                <field name="tax_ids" widget="many2many_tags"/>
+              </group>
+            </group>
+            <notebook>
+              <page string="Suscripciones">
+                <field name="subscription_ids"
+                       readonly="1"
+                       context="{'default_plan_id': id, 'default_fotoapp_is_photographer_plan': True}"/>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_fotoapp_plan" model="ir.actions.act_window">
+      <field name="name">Planes</field>
+      <field name="res_model">fotoapp.plan</field>
+      <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_fotoapp_plan_subscription_tree" model="ir.ui.view">
+      <field name="name">fotoapp.plan.subscription.tree</field>
+      <field name="model">sale.subscription</field>
+      <field name="arch" type="xml">
+        <list string="Suscripciones activas" create="0" edit="0">
+          <field name="name"/>
+          <field name="partner_id"/>
+          <field name="partner_ref"/>
+          <field name="plan_id"/>
+          <field name="state" widget="statusbar"/>
+          <field name="usage_storage_mb"/>
+          <field name="next_billing_date"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="view_fotoapp_plan_subscription_form" model="ir.ui.view">
+      <field name="name">fotoapp.plan.subscription.form</field>
+      <field name="model">sale.subscription</field>
+      <field name="arch" type="xml">
+        <form string="Suscripción" create="0">
+          <sheet>
+            <group>
+              <group>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="plan_id"/>
+                <field name="state" widget="statusbar" statusbar_visible="draft,trial,active,grace,suspended,expired,canceled"/>
+              </group>
+              <group>
+                <field name="activation_date"/>
+                <field name="next_billing_date"/>
+                <field name="usage_storage_mb" readonly="1"/>
+                <field name="plan_storage_limit_mb" readonly="1" string="Límite (MB)"/>
+              </group>
+            </group>
+            <notebook>
+              <page string="Fotos">
+                <field name="asset_ids" readonly="1" context="{'search_default_photographer_id': partner_id}"/>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_fotoapp_plan_subscription" model="ir.actions.act_window">
+      <field name="name">Suscripciones</field>
+      <field name="res_model">sale.subscription</field>
+      <field name="view_mode">list,form</field>
+      <field name="domain">[('fotoapp_is_photographer_plan', '=', True)]</field>
+    </record>
+
+ 
+    <menuitem id="menu_fotoapp_catalog" name="Catálogo" parent="menu_fotoapp_root" sequence="10" groups="base.group_user"/>
+    <menuitem id="menu_fotoapp_plans" name="Planes" parent="menu_fotoapp_root" sequence="20" groups="base.group_user"/>
+    <menuitem id="menu_fotoapp_categorias" name="Categorías" parent="menu_fotoapp_catalog" action="action_tienda_foto_categoria" sequence="10" groups="base.group_user"/>
+    <menuitem id="menu_fotoapp_plans_list" name="Configurar planes" parent="menu_fotoapp_plans" action="action_fotoapp_plan" sequence="10" groups="base.group_user"/>
+    <menuitem id="menu_fotoapp_subscriptions" name="Suscripciones" parent="menu_fotoapp_plans" action="action_fotoapp_plan_subscription" sequence="20" groups="base.group_user"/>
+
+  </data>
+</odoo>

@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_commission_rule_admin,marketplace.commission.rule admin,model_marketplace_commission_rule,group_marketplace_admin,1,1,1,1
+access_commission_rule_user,marketplace.commission.rule user,model_marketplace_commission_rule,base.group_user,1,0,0,0
+access_commission_line_admin,marketplace.commission.line admin,model_marketplace_commission_line,group_marketplace_admin,1,1,1,1
+access_commission_line_user,marketplace.commission.line user,model_marketplace_commission_line,base.group_user,1,0,0,0
+access_commission_line_portal,marketplace.commission.line portal,model_marketplace_commission_line,base.group_portal,1,0,0,0
+access_commission_rule_portal,marketplace.commission.rule portal,model_marketplace_commission_rule,base.group_portal,1,0,0,0

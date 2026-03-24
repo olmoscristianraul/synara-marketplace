@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Default commission rule -->
+    <record id="default_commission_rule" model="marketplace.commission.rule">
+        <field name="name">Comisión por defecto</field>
+        <field name="commission_percent">22.0</field>
+        <field name="priority">99</field>
+    </record>
+
+    <!-- Cron: Monthly commission invoice generation -->
+    <record id="ir_cron_marketplace_commission_invoices" model="ir.cron">
+        <field name="name">Marketplace: Generar facturas de comisiones mensuales</field>
+        <field name="model_id" ref="model_marketplace_commission_line"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_generate_monthly_commission_invoices()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

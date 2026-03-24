@@ -1,0 +1,716 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data noupdate="1">
+    <record id="fotoapp_category_futbol" model="tienda.foto.categoria">
+      <field name="name">Fútbol</field>
+      <field name="sequence">10</field>
+      <field name="portal_sequence">10</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_futsal" model="tienda.foto.categoria">
+      <field name="name">Futsal</field>
+      <field name="sequence">20</field>
+      <field name="portal_sequence">20</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_running" model="tienda.foto.categoria">
+      <field name="name">Running</field>
+      <field name="sequence">30</field>
+      <field name="portal_sequence">30</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_voley" model="tienda.foto.categoria">
+      <field name="name">Vóley</field>
+      <field name="sequence">40</field>
+      <field name="portal_sequence">40</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_tenis_playa" model="tienda.foto.categoria">
+      <field name="name">Tenis de playa</field>
+      <field name="sequence">50</field>
+      <field name="portal_sequence">50</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_fiestas" model="tienda.foto.categoria">
+      <field name="name">Fiestas</field>
+      <field name="sequence">60</field>
+      <field name="portal_sequence">60</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_basquet" model="tienda.foto.categoria">
+      <field name="name">Básquet</field>
+      <field name="sequence">70</field>
+      <field name="portal_sequence">70</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_congreso" model="tienda.foto.categoria">
+      <field name="name">Congreso</field>
+      <field name="sequence">80</field>
+      <field name="portal_sequence">80</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_handball" model="tienda.foto.categoria">
+      <field name="name">Handball</field>
+      <field name="sequence">90</field>
+      <field name="portal_sequence">90</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_crossfit" model="tienda.foto.categoria">
+      <field name="name">Crossfit</field>
+      <field name="sequence">100</field>
+      <field name="portal_sequence">100</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_ciclismo" model="tienda.foto.categoria">
+      <field name="name">Ciclismo</field>
+      <field name="sequence">110</field>
+      <field name="portal_sequence">110</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_automovilismo" model="tienda.foto.categoria">
+      <field name="name">Automovilismo</field>
+      <field name="sequence">120</field>
+      <field name="portal_sequence">120</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_tenis" model="tienda.foto.categoria">
+      <field name="name">Tenis</field>
+      <field name="sequence">130</field>
+      <field name="portal_sequence">130</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_airsoft" model="tienda.foto.categoria">
+      <field name="name">Airsoft</field>
+      <field name="sequence">140</field>
+      <field name="portal_sequence">140</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_musica" model="tienda.foto.categoria">
+      <field name="name">Música</field>
+      <field name="sequence">150</field>
+      <field name="portal_sequence">150</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_artes_marciales" model="tienda.foto.categoria">
+      <field name="name">Artes marciales</field>
+      <field name="sequence">160</field>
+      <field name="portal_sequence">160</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_boxeo" model="tienda.foto.categoria">
+      <field name="name">Boxeo</field>
+      <field name="sequence">170</field>
+      <field name="portal_sequence">170</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_caminata" model="tienda.foto.categoria">
+      <field name="name">Caminata</field>
+      <field name="sequence">180</field>
+      <field name="portal_sequence">180</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_concierto" model="tienda.foto.categoria">
+      <field name="name">Concierto</field>
+      <field name="sequence">190</field>
+      <field name="portal_sequence">190</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_esports" model="tienda.foto.categoria">
+      <field name="name">e-sports</field>
+      <field name="sequence">200</field>
+      <field name="portal_sequence">200</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_ferias" model="tienda.foto.categoria">
+      <field name="name">Ferias</field>
+      <field name="sequence">210</field>
+      <field name="portal_sequence">210</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_graduacion" model="tienda.foto.categoria">
+      <field name="name">Graduación</field>
+      <field name="sequence">220</field>
+      <field name="portal_sequence">220</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_fut_voley" model="tienda.foto.categoria">
+      <field name="name">Fut-voley</field>
+      <field name="sequence">230</field>
+      <field name="portal_sequence">230</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_gimnasia_artistica" model="tienda.foto.categoria">
+      <field name="name">Gimnasia artística</field>
+      <field name="sequence">240</field>
+      <field name="portal_sequence">240</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_motocross" model="tienda.foto.categoria">
+      <field name="name">Motocross</field>
+      <field name="sequence">250</field>
+      <field name="portal_sequence">250</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_hipismo" model="tienda.foto.categoria">
+      <field name="name">Hipismo</field>
+      <field name="sequence">260</field>
+      <field name="portal_sequence">260</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_hockey" model="tienda.foto.categoria">
+      <field name="name">Hockey</field>
+      <field name="sequence">270</field>
+      <field name="portal_sequence">270</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_yoga" model="tienda.foto.categoria">
+      <field name="name">Yoga</field>
+      <field name="sequence">280</field>
+      <field name="portal_sequence">280</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_jiu_jitsu" model="tienda.foto.categoria">
+      <field name="name">Jiu-jitsu</field>
+      <field name="sequence">290</field>
+      <field name="portal_sequence">290</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_judo" model="tienda.foto.categoria">
+      <field name="name">Judo</field>
+      <field name="sequence">300</field>
+      <field name="portal_sequence">300</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_karate" model="tienda.foto.categoria">
+      <field name="name">Karate</field>
+      <field name="sequence">310</field>
+      <field name="portal_sequence">310</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_motociclismo" model="tienda.foto.categoria">
+      <field name="name">Motociclismo</field>
+      <field name="sequence">320</field>
+      <field name="portal_sequence">320</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_mountain_bike" model="tienda.foto.categoria">
+      <field name="name">Mountain bike</field>
+      <field name="sequence">330</field>
+      <field name="portal_sequence">330</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_natacion" model="tienda.foto.categoria">
+      <field name="name">Natación</field>
+      <field name="sequence">340</field>
+      <field name="portal_sequence">340</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_padel" model="tienda.foto.categoria">
+      <field name="name">Pádel</field>
+      <field name="sequence">350</field>
+      <field name="portal_sequence">350</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_patin" model="tienda.foto.categoria">
+      <field name="name">Patín</field>
+      <field name="sequence">360</field>
+      <field name="portal_sequence">360</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_pilates" model="tienda.foto.categoria">
+      <field name="name">Pilates</field>
+      <field name="sequence">370</field>
+      <field name="portal_sequence">370</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_teatro" model="tienda.foto.categoria">
+      <field name="name">Teatro</field>
+      <field name="sequence">380</field>
+      <field name="portal_sequence">380</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_skate" model="tienda.foto.categoria">
+      <field name="name">Skate</field>
+      <field name="sequence">390</field>
+      <field name="portal_sequence">390</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_surf" model="tienda.foto.categoria">
+      <field name="name">Surf</field>
+      <field name="sequence">400</field>
+      <field name="portal_sequence">400</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_ping_pong" model="tienda.foto.categoria">
+      <field name="name">Ping pong</field>
+      <field name="sequence">410</field>
+      <field name="portal_sequence">410</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_capoeira" model="tienda.foto.categoria">
+      <field name="name">Capoeira</field>
+      <field name="sequence">420</field>
+      <field name="portal_sequence">420</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_triatlon" model="tienda.foto.categoria">
+      <field name="name">Triatlón</field>
+      <field name="sequence">430</field>
+      <field name="portal_sequence">430</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_powerlifting" model="tienda.foto.categoria">
+      <field name="name">Powerlifting</field>
+      <field name="sequence">440</field>
+      <field name="portal_sequence">440</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_entrenamiento" model="tienda.foto.categoria">
+      <field name="name">Entrenamiento</field>
+      <field name="sequence">450</field>
+      <field name="portal_sequence">450</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_escalada" model="tienda.foto.categoria">
+      <field name="name">Escalada</field>
+      <field name="sequence">460</field>
+      <field name="portal_sequence">460</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_rugby" model="tienda.foto.categoria">
+      <field name="name">Rugby</field>
+      <field name="sequence">470</field>
+      <field name="portal_sequence">470</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_otros" model="tienda.foto.categoria">
+      <field name="name">Otros</field>
+      <field name="sequence">480</field>
+      <field name="portal_sequence">480</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_fisicoculturismo" model="tienda.foto.categoria">
+      <field name="name">Fisicoculturismo</field>
+      <field name="sequence">490</field>
+      <field name="portal_sequence">490</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_atletismo" model="tienda.foto.categoria">
+      <field name="name">Atletismo</field>
+      <field name="sequence">500</field>
+      <field name="portal_sequence">500</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_religion" model="tienda.foto.categoria">
+      <field name="name">Religión</field>
+      <field name="sequence">510</field>
+      <field name="portal_sequence">510</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_bautismo" model="tienda.foto.categoria">
+      <field name="name">Bautismo</field>
+      <field name="sequence">520</field>
+      <field name="portal_sequence">520</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_casamiento" model="tienda.foto.categoria">
+      <field name="name">Casamiento</field>
+      <field name="sequence">530</field>
+      <field name="portal_sequence">530</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_retratos" model="tienda.foto.categoria">
+      <field name="name">Retratos</field>
+      <field name="sequence">540</field>
+      <field name="portal_sequence">540</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_danza_clasica" model="tienda.foto.categoria">
+      <field name="name">Danza clásica</field>
+      <field name="sequence">550</field>
+      <field name="portal_sequence">550</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_ensayos" model="tienda.foto.categoria">
+      <field name="name">Ensayos</field>
+      <field name="sequence">560</field>
+      <field name="portal_sequence">560</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_badminton" model="tienda.foto.categoria">
+      <field name="name">Badminton</field>
+      <field name="sequence">570</field>
+      <field name="portal_sequence">570</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_buceo" model="tienda.foto.categoria">
+      <field name="name">Buceo</field>
+      <field name="sequence">580</field>
+      <field name="portal_sequence">580</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_escolar" model="tienda.foto.categoria">
+      <field name="name">Escolar</field>
+      <field name="sequence">590</field>
+      <field name="portal_sequence">590</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_canotaje" model="tienda.foto.categoria">
+      <field name="name">Canotaje</field>
+      <field name="sequence">600</field>
+      <field name="portal_sequence">600</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_ajedrez" model="tienda.foto.categoria">
+      <field name="name">Ajedrez</field>
+      <field name="sequence">610</field>
+      <field name="portal_sequence">610</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_animales" model="tienda.foto.categoria">
+      <field name="name">Animales</field>
+      <field name="sequence">620</field>
+      <field name="portal_sequence">620</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_productos" model="tienda.foto.categoria">
+      <field name="name">Productos</field>
+      <field name="sequence">630</field>
+      <field name="portal_sequence">630</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_desfile_moda" model="tienda.foto.categoria">
+      <field name="name">Desfile de moda</field>
+      <field name="sequence">640</field>
+      <field name="portal_sequence">640</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_desfiles" model="tienda.foto.categoria">
+      <field name="name">Desfiles</field>
+      <field name="sequence">650</field>
+      <field name="portal_sequence">650</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_eventos_sociales" model="tienda.foto.categoria">
+      <field name="name">Eventos sociales</field>
+      <field name="sequence">660</field>
+      <field name="portal_sequence">660</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_viajes" model="tienda.foto.categoria">
+      <field name="name">Viajes</field>
+      <field name="sequence">670</field>
+      <field name="portal_sequence">670</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_carnaval" model="tienda.foto.categoria">
+      <field name="name">Carnaval</field>
+      <field name="sequence">680</field>
+      <field name="portal_sequence">680</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_futbol_playa" model="tienda.foto.categoria">
+      <field name="name">Fútbol de playa</field>
+      <field name="sequence">690</field>
+      <field name="portal_sequence">690</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_lucha_libre" model="tienda.foto.categoria">
+      <field name="name">Lucha libre</field>
+      <field name="sequence">700</field>
+      <field name="portal_sequence">700</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_muay_thai" model="tienda.foto.categoria">
+      <field name="name">Muay thai</field>
+      <field name="sequence">710</field>
+      <field name="portal_sequence">710</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_paisajes" model="tienda.foto.categoria">
+      <field name="name">Paisajes</field>
+      <field name="sequence">720</field>
+      <field name="portal_sequence">720</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_bowling" model="tienda.foto.categoria">
+      <field name="name">Bowling</field>
+      <field name="sequence">730</field>
+      <field name="portal_sequence">730</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_shows" model="tienda.foto.categoria">
+      <field name="name">Shows</field>
+      <field name="sequence">740</field>
+      <field name="portal_sequence">740</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_bmx" model="tienda.foto.categoria">
+      <field name="name">BMX</field>
+      <field name="sequence">750</field>
+      <field name="portal_sequence">750</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_paracaidismo" model="tienda.foto.categoria">
+      <field name="name">Paracaidismo</field>
+      <field name="sequence">760</field>
+      <field name="portal_sequence">760</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_vuelo_libre" model="tienda.foto.categoria">
+      <field name="name">Vuelo libre</field>
+      <field name="sequence">770</field>
+      <field name="portal_sequence">770</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_poker" model="tienda.foto.categoria">
+      <field name="name">Poker</field>
+      <field name="sequence">780</field>
+      <field name="portal_sequence">780</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+    <record id="fotoapp_category_spinning" model="tienda.foto.categoria">
+      <field name="name">Spinning</field>
+      <field name="sequence">790</field>
+      <field name="portal_sequence">790</field>
+      <field name="estado">publicado</field>
+      <field name="website_published">1</field>
+      <field name="display_on_homepage">1</field>
+      <field name="is_system_category">1</field>
+    </record>
+  </data>
+</odoo>

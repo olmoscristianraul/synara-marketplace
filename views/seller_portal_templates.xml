@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!--  Seller Registration & Dashboard Portal Templates     -->
+    <!-- ══════════════════════════════════════════════════════ -->
+
+    <!-- Registration Form -->
+    <template id="seller_registration_form" name="Registro de vendedor">
+        <t t-call="website.layout">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm">
+                            <div class="card-body p-4">
+                                <h2 class="text-center mb-4">Registrate como vendedor</h2>
+                                <p class="text-muted text-center mb-4">
+                                    Creá tu tienda y empezá a vender. Conectá tu MercadoPago y recibí los pagos directamente.
+                                </p>
+                                <t t-if="errors">
+                                    <div class="alert alert-danger">
+                                        <ul class="mb-0">
+                                            <t t-foreach="errors" t-as="err">
+                                                <li><t t-esc="err"/></li>
+                                            </t>
+                                        </ul>
+                                    </div>
+                                </t>
+                                <form method="POST" action="/mi/marketplace/registro">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Nombre completo *</label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                               t-att-value="values.get('name', '') if values else ''" required="required"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email *</label>
+                                        <input type="email" class="form-control" id="email" name="email"
+                                               t-att-value="values.get('email', '') if values else ''" required="required"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="store_name" class="form-label">Nombre de tu tienda *</label>
+                                        <input type="text" class="form-control" id="store_name" name="store_name"
+                                               t-att-value="values.get('store_name', '') if values else ''" required="required"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label">Teléfono</label>
+                                        <input type="tel" class="form-control" id="phone" name="phone"
+                                               t-att-value="values.get('phone', '') if values else ''"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Contraseña *</label>
+                                        <input type="password" class="form-control" id="password" name="password"
+                                               required="required" minlength="6"/>
+                                        <div class="form-text">Mínimo 6 caracteres</div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100 mt-3">
+                                        <i class="fa fa-user-plus me-2"/>Crear mi cuenta
+                                    </button>
+                                </form>
+                                <p class="text-center mt-3 text-muted">
+                                    ¿Ya tenés cuenta? <a href="/web/login?redirect=/mi/marketplace/dashboard">Iniciá sesión</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Seller Suspended -->
+    <template id="seller_suspended" name="Vendedor suspendido">
+        <t t-call="website.layout">
+            <div class="container py-5 text-center">
+                <div class="alert alert-warning">
+                    <h4><i class="fa fa-exclamation-triangle me-2"/>Tu cuenta de vendedor está suspendida</h4>
+                    <p>Contactate con soporte para más información.</p>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Shared Sidebar Navigation -->
+    <template id="seller_sidebar" name="Sidebar vendedor">
+        <div class="list-group mb-4">
+            <a t-attf-href="/mi/marketplace/dashboard"
+               t-attf-class="list-group-item list-group-item-action #{'active' if active_menu == 'dashboard' else ''}">
+                <i class="fa fa-tachometer me-2"/>Dashboard
+            </a>
+            <a t-attf-href="/mi/marketplace/pedidos"
+               t-attf-class="list-group-item list-group-item-action #{'active' if active_menu == 'orders' else ''}">
+                <i class="fa fa-shopping-cart me-2"/>Pedidos
+            </a>
+            <a t-attf-href="/mi/marketplace/comisiones"
+               t-attf-class="list-group-item list-group-item-action #{'active' if active_menu == 'commissions' else ''}">
+                <i class="fa fa-percent me-2"/>Comisiones
+            </a>
+            <a t-attf-href="/mi/marketplace/perfil"
+               t-attf-class="list-group-item list-group-item-action #{'active' if active_menu == 'profile' else ''}">
+                <i class="fa fa-user me-2"/>Mi perfil
+            </a>
+        </div>
+    </template>
+
+    <!-- Dashboard -->
+    <template id="seller_dashboard" name="Dashboard del vendedor">
+        <t t-call="website.layout">
+            <div class="container py-4">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <t t-call="synara-marketplace.seller_sidebar"/>
+                    </div>
+                    <div class="col-lg-9">
+                        <h2 class="mb-4">
+                            <i class="fa fa-tachometer me-2"/>Dashboard
+                        </h2>
+
+                        <!-- Onboarding alert -->
+                        <t t-if="partner.seller_onboarding_state == 'pending_mp'">
+                            <div class="alert alert-warning">
+                                <h5><i class="fa fa-exclamation-circle me-2"/>Conectá tu MercadoPago</h5>
+                                <p>Para empezar a vender, necesitás conectar tu cuenta de MercadoPago.</p>
+                                <a href="/mi/marketplace/perfil" class="btn btn-warning">
+                                    <i class="fa fa-credit-card me-2"/>Ir a mi perfil
+                                </a>
+                            </div>
+                        </t>
+
+                        <!-- Stats Cards -->
+                        <div class="row mb-4">
+                            <div class="col-md-3 mb-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-muted">Ventas totales</h5>
+                                        <h3 class="text-primary">
+                                            <t t-esc="'${:,.2f}'.format(total_sales)"/>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-muted">Comisiones</h5>
+                                        <h3 class="text-warning">
+                                            <t t-esc="'${:,.2f}'.format(total_commissions)"/>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-muted">Tus ganancias</h5>
+                                        <h3 class="text-success">
+                                            <t t-esc="'${:,.2f}'.format(total_earnings)"/>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-muted">Productos</h5>
+                                        <h3><t t-esc="product_count"/></h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Orders -->
+                        <h4 class="mb-3 mt-5">Últimos pedidos</h4>
+                        <t t-if="recent_orders">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Pedido</th>
+                                            <th>Fecha</th>
+                                            <th>Cliente</th>
+                                            <th class="text-end">Total</th>
+                                            <th class="text-end">Tu pago</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="recent_orders" t-as="order">
+                                            <tr>
+                                                <td>
+                                                    <a t-attf-href="/mi/marketplace/pedidos/#{order.id}">
+                                                        <t t-esc="order.name"/>
+                                                    </a>
+                                                </td>
+                                                <td><t t-esc="order.date_order" t-options="{'widget': 'date'}"/></td>
+                                                <td><t t-esc="order.partner_id.display_name"/></td>
+                                                <td class="text-end">
+                                                    <t t-esc="order.amount_total" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
+                                                </td>
+                                                <td class="text-end text-success">
+                                                    <t t-esc="order.marketplace_seller_amount" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="alert alert-info">
+                                <p class="mb-0">Todavía no tenés ventas.</p>
+                            </div>
+                        </t>
+
+                        <!-- Assigned Products -->
+                        <h4 class="mb-3 mt-5">Tus productos</h4>
+                        <t t-if="products">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th class="text-end">Precio</th>
+                                            <th>Categoría</th>
+                                            <th>Estado en tienda</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="products" t-as="prod">
+                                            <tr>
+                                                <td><t t-esc="prod.name"/></td>
+                                                <td class="text-end">
+                                                    <t t-esc="prod.list_price" t-options="{'widget': 'monetary', 'display_currency': prod.currency_id}"/>
+                                                </td>
+                                                <td><t t-esc="prod.categ_id.display_name"/></td>
+                                                <td>
+                                                    <t t-if="prod.website_published and prod.marketplace_approved">
+                                                        <span class="badge text-bg-success">Publicado</span>
+                                                    </t>
+                                                    <t t-elif="not prod.marketplace_approved">
+                                                        <span class="badge text-bg-warning">En revisión</span>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span class="badge text-bg-info">Aprobado</span>
+                                                    </t>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="alert alert-info text-center py-4">
+                                <h5>No tenés productos asignados</h5>
+                                <p class="mb-0 text-muted">El administrador publicará tus productos pronto.</p>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Profile -->
+    <template id="seller_profile" name="Perfil del vendedor">
+        <t t-call="website.layout">
+            <div class="container py-4">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <t t-call="synara-marketplace.seller_sidebar"/>
+                    </div>
+                    <div class="col-lg-9">
+                        <h2 class="mb-4"><i class="fa fa-user me-2"/>Mi perfil</h2>
+
+                        <t t-if="flash">
+                            <div class="alert alert-success alert-dismissible">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"/>
+                                <t t-esc="flash"/>
+                            </div>
+                        </t>
+                        <t t-if="error">
+                            <div class="alert alert-danger alert-dismissible">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"/>
+                                <t t-esc="error"/>
+                            </div>
+                        </t>
+
+                        <!-- MercadoPago Connection -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fa fa-credit-card me-2"/>MercadoPago</h5>
+                            </div>
+                            <div class="card-body">
+                                <t t-if="partner.mp_seller_account_status == 'connected'">
+                                    <div class="alert alert-success mb-0">
+                                        <i class="fa fa-check-circle me-2"/>
+                                        Cuenta conectada
+                                        <t t-if="partner.mp_seller_account_email">
+                                            (<t t-esc="partner.mp_seller_account_email"/>)
+                                        </t>
+                                    </div>
+                                </t>
+                                <t t-elif="mp_available">
+                                    <p class="text-muted">
+                                        Conectá tu cuenta de MercadoPago para recibir pagos de tus ventas.
+                                    </p>
+                                    <a t-att-href="connect_url" class="btn btn-primary">
+                                        <i class="fa fa-link me-2"/>Conectar MercadoPago
+                                    </a>
+                                </t>
+                                <t t-else="">
+                                    <div class="alert alert-warning mb-0">
+                                        La integración con MercadoPago no está configurada aún.
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- Profile Form -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fa fa-store me-2"/>Datos de la tienda</h5>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST" action="/mi/marketplace/perfil" enctype="multipart/form-data">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <div class="mb-3">
+                                        <label for="seller_store_name" class="form-label">Nombre de tienda</label>
+                                        <input type="text" class="form-control" id="seller_store_name"
+                                               name="seller_store_name"
+                                               t-att-value="partner.seller_store_name or ''"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="seller_description" class="form-label">Descripción</label>
+                                        <textarea class="form-control" id="seller_description"
+                                                  name="seller_description" rows="4"><t t-esc="partner.seller_description or ''"/></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label">Teléfono</label>
+                                        <input type="tel" class="form-control" id="phone" name="phone"
+                                               t-att-value="partner.phone or ''"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="seller_logo" class="form-label">Logo de tienda</label>
+                                        <input type="file" class="form-control" id="seller_logo"
+                                               name="seller_logo" accept="image/*"/>
+                                        <t t-if="partner.seller_logo">
+                                            <img t-attf-src="data:image/png;base64,#{partner.seller_logo.decode()}"
+                                                 class="img-thumbnail mt-2" style="max-height: 80px;"/>
+                                        </t>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-save me-2"/>Guardar cambios
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Integrate with generic Odoo /my/account portal -->
+    <template id="portal_my_details_mp_connect" inherit_id="portal.portal_my_details" name="Mercado Pago Connection">
+        <xpath expr="//form" position="after">
+            <t t-set="partner" t-value="request.env.user.partner_id"/>
+            <div class="row mt-4 mb-5">
+                <div class="col-lg-12">
+                    <div class="card bg-light border-0 shadow-sm">
+                        <div class="card-body">
+                            <h4 class="mb-3"><i class="fa fa-handshake-o me-2"/>Mercado Pago: Cuenta de vendedor</h4>
+                            <t t-if="not partner.is_marketplace_seller">
+                                <p class="text-muted">Aún no eres un vendedor del marketplace. Para vender en esta plataforma y vincular Mercado Pago, debes aceptar los términos y registrarte.</p>
+                                <a href="/mi/marketplace/registro" class="btn btn-outline-primary">Quiero ser vendedor</a>
+                            </t>
+                            <t t-if="partner.is_marketplace_seller">
+                                <t t-if="partner.mp_seller_account_status == 'connected'">
+                                    <div class="alert alert-success d-flex align-items-center mb-0">
+                                        <i class="fa fa-check-circle fa-2x me-3"></i>
+                                        <div>
+                                            <h5 class="alert-heading mb-1">¡Cuenta conectada!</h5>
+                                            <p class="mb-0">Tu Mercado Pago está vinculado correctamente. Estás listo para recibir pagos. 
+                                            <t t-if="partner.mp_seller_account_email">
+                                                <br/><small>(<t t-esc="partner.mp_seller_account_email"/>)</small>
+                                            </t></p>
+                                        </div>
+                                        <div class="ms-auto">
+                                            <a href="/mi/marketplace/mercadopago/desvincular" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro quieres desvincular tu cuenta de Mercado Pago? Ya no podrás recibir pagos.');">Desvincular</a>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <a href="/mi/marketplace/dashboard" class="btn btn-primary">Ir a mi Panel de Vendedor</a>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="alert alert-warning d-flex align-items-center mb-0">
+                                        <i class="fa fa-exclamation-triangle fa-2x me-3"></i>
+                                        <div>
+                                            <h5 class="alert-heading mb-1">Mercado Pago pendiente</h5>
+                                            <p class="mb-1">Para recibir los pagos de las ventas de tus productos directamente a tu cuenta, debes autorizar la conexión.</p>
+                                            <a href="/mi/marketplace/mercadopago/conectar" class="btn btn-primary mt-2">
+                                                <i class="fa fa-link"></i> Vincular mi cuenta de Mercado Pago
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <a href="/mi/marketplace/dashboard" class="btn btn-secondary">Ir a mi Panel de Vendedor</a>
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

@@ -1,0 +1,8 @@
+<odoo>
+  <record id="assets_frontend_guest_email" model="ir.asset">
+    <field name="name">FotoApp guest email payment</field>
+    <field name="bundle">web.assets_frontend</field>
+    <field name="path">/fotoapp/static/src/js/payment_guest_email.js</field>
+    <field name="target">append</field>
+  </record>
+</odoo>

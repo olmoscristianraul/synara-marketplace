@@ -1,0 +1,106 @@
+<odoo>
+  <data>
+    <template id="photographer_debts_page" name="Deudas del fotógrafo">
+      <t t-call="website.layout">
+        <div id="wrap" class="oe_structure">
+          <section class="py-5 bg-200">
+            <div class="container">
+              <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4">
+                <div>
+                  <h1 class="h3 mb-1">Deudas de suscripción</h1>
+                  <p class="text-muted mb-0">Administrá las renovaciones de tu plan y regularizá tus pagos.</p>
+                </div>
+              </div>
+              <t t-call="fotoapp.photographer_portal_nav">
+                <t t-set="active_menu" t-value="'debts'"/>
+              </t>
+
+              <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                  <h2 class="h5 mb-0">Pendientes y en gracia</h2>
+                </div>
+                <div class="card-body p-0">
+                  <t t-if="active_debts">
+                    <div class="table-responsive">
+                      <table class="table table-hover align-middle mb-0">
+                        <thead>
+                          <tr>
+                            <th>Periodo</th>
+                            <th>Concepto</th>
+                            <th>Plan</th>
+                            <th>Monto</th>
+                            <th>Vence</th>
+                            <th>Gracia</th>
+                            <th>Estado</th>
+                            <th class="text-end">Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr t-foreach="active_debts" t-as="debt">
+                            <td>
+                              <strong t-esc="debt.billing_date"/>
+                            </td>
+                            <td t-esc="debt.get_portal_label()"/>
+                            <td t-esc="debt.plan_id.name or '-'"/>
+                            <td>
+                              $<t t-esc="'%.2f' % debt.amount"/>
+                            </td>
+                            <td t-esc="debt.due_date"/>
+                            <td t-esc="debt.grace_end_date"/>
+                            <td>
+                              <span t-attf-class="badge #{'bg-warning text-dark' if debt.state == 'in_grace' else 'bg-secondary'}">
+                                <t t-esc="dict(pending='Pendiente', in_grace='En gracia').get(debt.state, debt.state)"/>
+                              </span>
+                            </td>
+                            <td class="text-end">
+                              <a t-if="debt.can_be_paid()" t-att-href="'/mi/fotoapp/deuda/%s/carrito' % debt.id" class="btn btn-sm btn-outline-primary">
+                                Pagar desde carrito
+                              </a>
+                              <span t-if="not debt.can_be_paid()" class="text-muted small">No disponible</span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </t>
+                  <t t-else="">
+                    <div class="p-4 text-center text-muted">
+                      No tenés deudas pendientes en este momento.
+                    </div>
+                  </t>
+                </div>
+              </div>
+
+              <div class="card shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                  <h2 class="h5 mb-0">Historial de pagos</h2>
+                  <span class="text-muted small" t-esc="len(paid_debts)"/> pagos registrados
+                </div>
+                <div class="card-body p-0">
+                  <t t-if="paid_debts">
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item d-flex justify-content-between align-items-center" t-foreach="paid_debts" t-as="debt">
+                        <div>
+                          <div class="fw-semibold" t-esc="debt.plan_id.name or debt.get_portal_label()"/>
+                          <small class="text-muted">
+                            Periodo <t t-esc="debt.billing_date"/> · Pagado el <t t-esc="debt.paid_date"/>
+                          </small>
+                        </div>
+                        <div class="fw-semibold">$<t t-esc="'%.2f' % debt.amount"/></div>
+                      </li>
+                    </ul>
+                  </t>
+                  <t t-else="">
+                    <div class="p-4 text-center text-muted">
+                      Aún no hay pagos registrados.
+                    </div>
+                  </t>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </t>
+    </template>
+  </data>
+</odoo>

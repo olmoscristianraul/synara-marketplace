@@ -1,0 +1,80 @@
+<odoo>
+  <template id="fotoapp_plan_public_page" name="Planes para fotógrafos">
+    <t t-call="website.layout">
+      <div class="o_fotoapp_plan_hero py-5 bg-100">
+        <div class="container text-center">
+          <h1 class="display-5 fw-bold">Planes para fotógrafos</h1>
+          <p class="lead text-muted">Elige el plan que mejor se adapta al volumen de tus eventos y comienza a vender desde el front-end.</p>
+        </div>
+      </div>
+      <div class="container py-5">
+        <t t-if="plans">
+          <div class="row g-4">
+            <t t-foreach="plans" t-as="plan" t-key="plan.id">
+              <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm border-0">
+                  <t t-if="plan.cover_image">
+                    <img t-att-src="'/web/image/fotoapp.plan/%s/cover_image' % plan.id" class="card-img-top" t-att-alt="plan.name"/>
+                  </t>
+                  <div class="card-body d-flex flex-column">
+                    <h3 class="h4"> <t t-esc="plan.name"/> </h3>
+                    <p class="text-muted small mb-3" t-esc="plan.description or ''"/>
+                    <div class="mb-2">
+                      <span class="h2 fw-semibold">$<t t-esc="'%.2f' % plan.monthly_fee"/></span>
+                      <span class="text-muted">/mes</span>
+                    </div>
+                    <ul class="list-unstyled small text-muted mb-4">
+                      <li>
+                        <i class="fa fa-check text-success me-2"/>Límite almacenamiento: <t t-esc="plan.storage_limit_mb or int((plan.storage_limit_gb or 0.0) * 1024)"/> MB
+                      </li>
+                      <li>
+                        <i class="fa fa-check text-success me-2"/>Comisión: <t t-esc="plan.commission_percent"/>%
+                      </li>
+                    </ul>
+                    <div class="mt-auto">
+                      <t t-if="current_plan_id and plan.id == current_plan_id">
+                        <button type="button" class="btn btn-success" disabled="disabled">Adquirido</button>
+                      </t>
+                      <t t-elif="plan.product_variant_id">
+                        <form action="/shop/cart/update" method="post" class="d-grid">
+                          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                          <input type="hidden" name="product_id" t-att-value="plan.product_variant_id.id"/>
+                          <input type="hidden" name="add_qty" value="1"/>
+                          <button type="submit" class="btn btn-primary">Agregar al carrito</button>
+                        </form>
+                      </t>
+                      <t t-else="">
+                        <button type="button" class="btn btn-secondary" disabled="disabled">Producto no disponible</button>
+                      </t>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </t>
+          </div>
+        </t>
+        <t t-else="">
+          <div class="alert alert-info" role="alert">
+            Aún no hay planes publicados para mostrar.
+          </div>
+        </t>
+      </div>
+    </t>
+  </template>
+
+  <!-- <record id="menu_planes" model="website.menu">
+    <field name="name">Planes</field>
+    <field name="url">/planesfotografo</field>
+    <field name="parent_id" ref="website.main_menu"/>
+    <field name="sequence">30</field>
+    <field name="is_visible">True</field>
+  </record> -->
+
+  <template id="hide_home_menu" inherit_id="website.layout">
+    <xpath expr="//head" position="inside">
+      <style type="text/css">
+        li[data-menu-xmlid='website.menu_homepage'] {display: none !important;}
+      </style>
+    </xpath>
+  </template>
+</odoo>

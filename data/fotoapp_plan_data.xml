@@ -1,0 +1,52 @@
+<odoo>
+  <data noupdate="1">
+    <record id="fotoapp_plan_freemium" model="fotoapp.plan">
+      <field name="name">Base Freemium</field>
+      <field name="code">FREEMIUM</field>
+      <field name="sequence">1</field>
+      <field name="monthly_fee">0.0</field>
+      <field name="currency_id" ref="base.ARS"/>
+      <field name="storage_limit_mb">200</field>
+      <field name="commission_percent">80.0</field>
+      <field name="description">Plan gratuito con comisiones superiores pensado para fotógrafos que recién comienzan.</field>
+      <field name="website_published">True</field>
+      <field name="is_freemium">True</field>
+    </record>
+
+    <record id="fotoapp_plan_basic" model="fotoapp.plan">
+      <field name="name">Básico</field>
+      <field name="code">BASIC</field>
+      <field name="sequence">5</field>
+      <field name="monthly_fee">29.0</field>
+      <field name="currency_id" ref="base.ARS"/>
+      <field name="storage_limit_mb">1024</field>
+      <field name="commission_percent">35.0</field>
+      <field name="description">Plan inicial con límite de 1 GB y comisiones reducidas.</field>
+      <field name="website_published">True</field>
+    </record>
+
+    <record id="fotoapp_plan_pro" model="fotoapp.plan">
+      <field name="name">Profesional</field>
+      <field name="code">PRO</field>
+      <field name="sequence">10</field>
+      <field name="monthly_fee">59.0</field>
+      <field name="currency_id" ref="base.ARS"/>
+      <field name="storage_limit_mb">5120</field>
+      <field name="commission_percent">20.0</field>
+      <field name="description">Plan para fotógrafos con alto volumen de ventas.</field>
+      <field name="website_published">True</field>
+    </record>
+
+    <record id="fotoapp_plan_enterprise" model="fotoapp.plan">
+      <field name="name">Enterprise</field>
+      <field name="code">ENTERPRISE</field>
+      <field name="sequence">15</field>
+      <field name="monthly_fee">129.0</field>
+      <field name="currency_id" ref="base.ARS"/>
+      <field name="storage_limit_mb">20480</field>
+      <field name="commission_percent">10.0</field>
+      <field name="description">Plan empresarial con almacenamiento extendido.</field>
+      <field name="website_published">True</field>
+    </record>
+  </data>
+</odoo>

@@ -1,0 +1,91 @@
+<odoo>
+  <data>
+    <template id="manual_payment_option" name="FotoApp Manual Payment option" inherit_id="website_sale.payment">
+      <xpath expr="//div[@id='payment_method']" position="after">
+        <t t-set="fotoapp_order" t-value="order"/>
+        <t t-if="fotoapp_order">
+          <t t-set="fotoapp_photo_lines" t-value="fotoapp_order.order_line.filtered(lambda l: l.foto_photographer_id)"/>
+          <t t-set="fotoapp_photographers" t-value="fotoapp_photo_lines.mapped('foto_photographer_id')"/>
+          <t t-set="fotoapp_multi_photographer" t-value="len(fotoapp_photographers) &gt; 1"/>
+          <div class="card mt-3" id="fotoapp-manual-payment-card">
+            <div class="card-body">
+              <div class="d-flex align-items-start gap-3">
+                <div class="form-check mt-1">
+                  <input type="radio" class="form-check-input" id="fotoapp_manual_payment_radio" name="fotoapp_manual_payment" checked="checked"/>
+                </div>
+                <div class="flex-grow-1">
+                  <label class="form-check-label fw-semibold" for="fotoapp_manual_payment_radio">Coordinar con el fotógrafo</label>
+                  <p class="text-muted small mb-3">Coordiná el pago directamente con el fotógrafo.</p>
+                  <t t-if="fotoapp_multi_photographer">
+                    <div class="alert alert-warning mb-0" role="alert">
+                      No está permitido agregar fotos de varios fotógrafos al carrito. Separá los carritos por favor.
+                    </div>
+                  </t>
+                  <t t-else="">
+                    <form action="/fotoapp/payment/manual" method="post" class="d-flex gap-2 align-items-center flex-wrap">
+                      <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                      <button type="submit" class="btn btn-primary">Coordinar</button>
+                    </form>
+                  </t>
+                </div>
+              </div>
+            </div>
+          </div>
+        </t>
+      </xpath>
+    </template>
+
+    <template id="manual_payment_contact" name="FotoApp Manual Payment Contact">
+      <t t-call="website.layout">
+        <div id="wrap" class="oe_structure">
+          <section class="py-5 bg-200">
+            <div class="container">
+              <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-md-5">
+                  <h1 class="h4 mb-3">Coordinar con el fotógrafo</h1>
+                  <p class="text-muted mb-4">Contactá al fotógrafo para acordar el pago fuera de la web. No se generó una orden ni un pago en línea.</p>
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="border rounded p-3 h-100">
+                        <div class="fw-semibold mb-1">Nombre</div>
+                        <div class="text-muted" t-esc="contact_name"/>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="border rounded p-3 h-100">
+                        <div class="fw-semibold mb-1">Instagram</div>
+                        <div class="text-muted" t-esc="instagram"/>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="border rounded p-3 h-100">
+                        <div class="fw-semibold mb-1">WhatsApp</div>
+                        <div class="text-muted" t-esc="whatsapp"/>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="border rounded p-3 h-100">
+                        <div class="fw-semibold mb-1">CBU/CVU</div>
+                        <div class="text-muted" t-esc="cbu_cvu"/>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="border rounded p-3 h-100">
+                        <div class="fw-semibold mb-1">Alias</div>
+                        <div class="text-muted" t-esc="alias"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-4 d-flex flex-wrap gap-2">
+                    <a class="btn btn-primary" t-att-href="gallery_url">Volver a la galería</a>
+                    <a class="btn btn-outline-secondary" href="/shop/cart">Volver al carrito</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </t>
+    </template>
+  </data>
+</odoo>

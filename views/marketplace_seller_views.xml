@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!--  Seller Views (res.partner with is_marketplace_seller) -->
+    <!-- ══════════════════════════════════════════════════════ -->
+
+    <!-- Tree View -->
+    <record id="view_marketplace_seller_tree" model="ir.ui.view">
+        <field name="name">marketplace.seller.tree</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <list string="Vendedores Marketplace">
+                <field name="name"/>
+                <field name="seller_store_name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="seller_onboarding_state" widget="badge"
+                       decoration-success="seller_onboarding_state == 'active'"
+                       decoration-warning="seller_onboarding_state == 'pending_mp'"
+                       decoration-danger="seller_onboarding_state == 'suspended'"
+                       decoration-info="seller_onboarding_state == 'draft'"/>
+                <field name="mp_seller_account_status" widget="badge"
+                       decoration-success="mp_seller_account_status == 'connected'"
+                       decoration-danger="mp_seller_account_status == 'error'"
+                       decoration-muted="mp_seller_account_status == 'not_connected'"/>
+                <field name="marketplace_product_count"/>
+                <field name="marketplace_sale_count"/>
+                <field name="seller_commission_percent"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action for seller's products (stat button) -->
+    <record id="action_marketplace_seller_products" model="ir.actions.act_window">
+        <field name="name">Productos del vendedor</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('marketplace_seller_id', '=', active_id)]</field>
+        <field name="context">{'default_marketplace_seller_id': active_id}</field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_marketplace_seller_form" model="ir.ui.view">
+        <field name="name">marketplace.seller.form</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form string="Vendedor Marketplace">
+                <header>
+                    <button name="action_activate_seller" type="object"
+                            string="Activar vendedor"
+                            class="btn-primary"
+                            invisible="seller_onboarding_state == 'active'"
+                            confirm="¿Confirmar activación del vendedor?"/>
+                    <button name="action_suspend_seller" type="object"
+                            string="Suspender"
+                            class="btn-warning"
+                            invisible="seller_onboarding_state != 'active'"
+                            confirm="¿Confirmar suspensión del vendedor?"/>
+                    <button name="action_reactivate_seller" type="object"
+                            string="Reactivar"
+                            class="btn-success"
+                            invisible="seller_onboarding_state != 'suspended'"/>
+                    <field name="seller_onboarding_state" widget="statusbar"
+                           statusbar_visible="draft,pending_mp,active"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="action"
+                                icon="fa-shopping-bag"
+                                name="%(action_marketplace_seller_products)d">
+                            <field name="marketplace_product_count" widget="statinfo"
+                                   string="Productos"/>
+                        </button>
+                        <button class="oe_stat_button" type="object"
+                                icon="fa-shopping-cart"
+                                name="action_view_seller_orders">
+                            <field name="marketplace_sale_count" widget="statinfo"
+                                   string="Ventas"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Suspendido" bg_color="text-bg-danger"
+                            invisible="seller_onboarding_state != 'suspended'"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nombre del vendedor"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Información de tienda">
+                            <field name="seller_store_name"/>
+                            <field name="seller_slug"/>
+                            <field name="seller_description"/>
+                            <field name="seller_logo" widget="image" class="oe_avatar"/>
+                        </group>
+                        <group string="Contacto">
+                            <field name="email"/>
+                            <field name="phone"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Comisión">
+                            <field name="seller_commission_percent"/>
+                        </group>
+                        <group string="MercadoPago">
+                            <field name="mp_seller_account_status" widget="badge"/>
+                            <field name="mp_seller_account_email"/>
+                            <field name="mp_seller_user_id" groups="base.group_system"/>
+                            <field name="mp_seller_token_expires_at" groups="base.group_system"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Productos" name="page_products">
+                            <field name="marketplace_product_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="list_price"/>
+                                    <field name="marketplace_approved" widget="boolean_toggle"/>
+                                    <field name="website_published" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Comisiones" name="page_commissions">
+                            <field name="marketplace_commission_line_ids">
+                                <list>
+                                    <field name="sale_order_name"/>
+                                    <field name="sale_date"/>
+                                    <field name="sale_amount"/>
+                                    <field name="commission_percent"/>
+                                    <field name="commission_amount"/>
+                                    <field name="seller_amount"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="invoice_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_marketplace_seller_search" model="ir.ui.view">
+        <field name="name">marketplace.seller.search</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <search string="Buscar vendedores">
+                <field name="name"/>
+                <field name="seller_store_name"/>
+                <field name="email"/>
+                <separator/>
+                <filter string="Activos" name="filter_active"
+                        domain="[('seller_onboarding_state', '=', 'active')]"/>
+                <filter string="Pendientes MP" name="filter_pending_mp"
+                        domain="[('seller_onboarding_state', '=', 'pending_mp')]"/>
+                <filter string="Suspendidos" name="filter_suspended"
+                        domain="[('seller_onboarding_state', '=', 'suspended')]"/>
+                <separator/>
+                <filter string="MP Conectado" name="filter_mp_connected"
+                        domain="[('mp_seller_account_status', '=', 'connected')]"/>
+                <filter string="MP Sin conectar" name="filter_mp_not_connected"
+                        domain="[('mp_seller_account_status', '=', 'not_connected')]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter string="Estado" name="group_state"
+                            context="{'group_by': 'seller_onboarding_state'}"/>
+                    <filter string="Estado MP" name="group_mp_status"
+                            context="{'group_by': 'mp_seller_account_status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_marketplace_sellers" model="ir.actions.act_window">
+        <field name="name">Vendedores</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_marketplace_seller', '=', True)]</field>
+        <field name="context">{'default_is_marketplace_seller': True}</field>
+        <field name="search_view_id" ref="view_marketplace_seller_search"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_marketplace_seller_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_marketplace_seller_form')})]"/>
+    </record>
+</odoo>

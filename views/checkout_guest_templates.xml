@@ -1,0 +1,33 @@
+<odoo>
+  <data>
+    <template id="download_link_expired" name="FotoApp Download Link Expired">
+      <t t-call="website.layout">
+        <div id="wrap" class="oe_structure">
+          <section class="py-5 bg-200">
+            <div class="container">
+              <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-md-5 text-center">
+                  <h1 class="h4 mb-3">Link vencido</h1>
+                  <p class="text-muted mb-0">El enlace de descarga ya no está disponible. Solicitá uno nuevo al fotógrafo.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </t>
+    </template>
+
+    <template id="guest_checkout_address_minimal" name="FotoApp Guest Checkout Minimal" inherit_id="website_sale.address">
+      <!-- Esto oculta los campos de dirección para carritos de invitados -->
+      <xpath expr="//form[@action='/shop/address/submit']//h4[hasclass('mb-1')][1]" position="attributes">
+        <attribute name="t-if">not is_anonymous_cart</attribute>
+      </xpath>
+
+      <!-- Esto oculta el campo de nombre completo para carritos de invitados -->
+      <xpath expr="//div[@id='div_name']/ancestor::div[hasclass('row')][1]" position="attributes">
+        <attribute name="t-if">not is_anonymous_cart</attribute>
+      </xpath>
+    </template> 
+    
+  </data>
+</odoo>

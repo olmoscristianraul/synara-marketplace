@@ -1,0 +1,35 @@
+<odoo>
+  <data>
+    <template id="gallery_photographer_required" name="Acceso restringido">
+      <t t-call="website.layout">
+        <div id="wrap" class="oe_structure">
+          <section class="py-5">
+            <div class="container">
+              <div class="alert alert-warning" role="alert">
+                Debes ser un fotógrafo habilitado para acceder a este panel. Pide acceso al administrador si crees que esto es un error.
+              </div>
+              <div class="d-flex gap-2">
+                <a class="btn btn-primary" href="/galeria">Volver a la galería</a>
+                <a class="btn btn-outline-secondary" href="/web/login">Ingresar con otra cuenta</a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </t>
+    </template>
+
+    <template id="photographer_portal_nav" name="Navegación portal fotógrafo">
+      <t t-set="portal_active" t-value="active_menu or ''"/>
+      <div class="nav nav-pills mb-4">
+        <a t-attf-class="nav-link #{'active' if portal_active == 'dashboard' else ''}" href="/mi/fotoapp">Resumen</a>
+        <a t-attf-class="nav-link #{'active' if portal_active == 'profile' else ''}" href="/mi/fotoapp/perfil">Perfil</a>
+        <a t-attf-class="nav-link #{'active' if portal_active == 'events' else ''}" href="/mi/fotoapp/eventos">Eventos</a>
+        <a t-attf-class="nav-link #{'active' if portal_active == 'events_new' else ''}" href="/mi/fotoapp/eventos/nuevo">Nuevo evento</a>
+        <a t-attf-class="nav-link #{'active' if portal_active == 'archived' else ''}" href="/mi/fotoapp/fotos/archivadas">Fotos archivadas</a>
+        <a t-attf-class="nav-link #{'active' if portal_active == 'settings' else ''}" href="/mi/fotoapp/configuracion/marca-agua">Marca de agua</a>
+        <a t-attf-class="nav-link #{'active' if portal_active == 'purchases' else ''}" href="/mi/fotoapp/compras">Compras</a>
+        <a t-attf-class="nav-link #{'active' if portal_active == 'debts' else ''}" href="/mi/fotoapp/deudas">Deudas</a>
+      </div>
+    </template>
+  </data>
+</odoo>

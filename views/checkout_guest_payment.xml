@@ -1,0 +1,74 @@
+<odoo>
+  <template id="fotoapp_payment_email" inherit_id="payment.submit_button" name="FotoApp Payment Email Requirement">
+    <xpath expr="//button[@name='o_payment_submit_button']" position="before">
+      <div t-if="fotoapp_guest" class="form-group mb-3">
+        <label for="fotoapp_guest_email" class="form-label">Correo de entrega</label>
+        <input id="fotoapp_guest_email" name="guest_email" type="email"
+               class="form-control" required="required"
+               t-att-value="order.partner_id.email or ''"
+               placeholder="Ingresá el correo para recibir la foto" />
+        <small id="fotoapp_email_error" class="text-danger d-none">Ingresá un email válido para continuar.</small>
+      </div>
+    </xpath>
+
+    <xpath expr="//button[@name='o_payment_submit_button']" position="after">
+      <t t-if="fotoapp_guest">
+        <script type="text/javascript">
+          (function() {
+            var emailInput = document.getElementById('fotoapp_guest_email');
+            var payBtn = document.querySelector("button[name='o_payment_submit_button']");
+            var errorEl = document.getElementById('fotoapp_email_error');
+            if (!emailInput || !payBtn) { return; }
+            var form = payBtn.closest('form')
+              || document.querySelector('form.o_payment_form')
+              || document.querySelector('#o_payment_form_pay')
+              || document.querySelector('form[action*="/shop/payment/transaction"]');
+
+            function isValidEmail(val) {
+              return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val.trim());
+            }
+
+            function toggle() {
+              var ok = isValidEmail(emailInput.value);
+              payBtn.disabled = !ok;
+              if (errorEl) {
+                errorEl.classList.toggle('d-none', ok);
+              }
+              return ok;
+            }
+
+            toggle();
+            emailInput.addEventListener('input', toggle);
+
+            function ensureHiddenEmail(targetForm) {
+              var existing = targetForm.querySelector('input[name="guest_email"]');
+              if (!existing) {
+                existing = document.createElement('input');
+                existing.type = 'hidden';
+                existing.name = 'guest_email';
+                targetForm.appendChild(existing);
+              }
+              existing.value = emailInput.value.trim();
+            }
+
+            if (form) {
+              // Crea el hidden al cargar y lo mantiene sincronizado
+              ensureHiddenEmail(form);
+              emailInput.addEventListener('input', function() {
+                ensureHiddenEmail(form);
+              });
+              form.addEventListener('submit', function(ev) {
+                if (!toggle()) {
+                  ev.preventDefault();
+                  ev.stopPropagation();
+                  return false;
+                }
+                ensureHiddenEmail(form);
+              });
+            }
+          })();
+        </script>
+      </t>
+    </xpath>
+  </template>
+</odoo>

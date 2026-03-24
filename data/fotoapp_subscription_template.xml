@@ -1,0 +1,13 @@
+<odoo>
+  <data noupdate="1">
+    <record id="fotoapp_subscription_template" model="sale.subscription.template">
+      <field name="name">FotoApp Subscription Template</field>
+      <field name="code">FOTOAPP</field>
+      <field name="recurring_interval">1</field>
+      <field name="recurring_rule_type">months</field>
+      <field name="recurring_rule_boundary">unlimited</field>
+      <field name="invoicing_mode">draft</field>
+      <field name="description">Suscripciones administradas por FotoApp. No generar facturas automáticas.</field>
+    </record>
+  </data>
+</odoo>

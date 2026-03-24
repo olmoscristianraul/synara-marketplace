@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_marketplace_settings_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.synara.marketplace</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Marketplace" string="Marketplace" name="synara_marketplace">
+                    <block title="MercadoPago - Credenciales de la plataforma"
+                           help="Configuración de la aplicación Marketplace en MercadoPago">
+                        <setting string="Client ID" help="ID de la aplicación de MercadoPago registrada como Marketplace">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="synara_mp_client_id" class="col-lg-3 o_light_label"/>
+                                    <field name="synara_mp_client_id"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Client Secret" help="Clave secreta de la aplicación de MercadoPago">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="synara_mp_client_secret" class="col-lg-3 o_light_label"/>
+                                    <field name="synara_mp_client_secret" password="True"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Redirect URI" help="URL callback para el flujo OAuth de vendedores">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="synara_mp_redirect_uri" class="col-lg-3 o_light_label"/>
+                                    <field name="synara_mp_redirect_uri" placeholder="https://tudominio.com/marketplace/mercadopago/oauth/callback"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Diario de pagos" help="Diario bancario para registrar cobros de MercadoPago">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="synara_mp_gateway_journal_id" class="col-lg-3 o_light_label"/>
+                                    <field name="synara_mp_gateway_journal_id"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Comisiones" help="Configuración de comisiones del marketplace">
+                        <setting string="Comisión por defecto" help="Porcentaje de comisión que se aplica si no hay reglas específicas">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="synara_mp_default_commission" class="col-lg-3 o_light_label"/>
+                                    <field name="synara_mp_default_commission"/>
+                                    <span class="ms-2">%</span>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Productos" help="Configuración de publicación de productos">
+                        <setting string="Aprobación requerida"
+                                 help="Si está activo, los productos de vendedores requieren aprobación de un admin antes de publicarse en el eCommerce">
+                            <field name="synara_mp_require_approval"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_marketplace_settings" model="ir.actions.act_window">
+        <field name="name">Ajustes Marketplace</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'synara_marketplace'}</field>
+    </record>
+</odoo>

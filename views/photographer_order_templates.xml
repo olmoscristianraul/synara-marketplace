@@ -1,0 +1,65 @@
+<odoo>
+  <data>
+    <template id="photographer_purchases" name="Compras del fotógrafo">
+      <t t-call="website.layout">
+        <div id="wrap" class="oe_structure">
+          <section class="py-5">
+            <div class="container">
+              <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+                <div>
+                  <h1 class="h4 mb-1">Compras realizadas</h1>
+                  <p class="text-muted mb-0">Descargá las fotos adquiridas en cada orden.</p>
+                </div>
+              </div>
+              <t t-call="fotoapp.photographer_portal_nav"/>
+              <div class="card shadow-sm">
+                <div class="card-body">
+                  <t t-if="orders">
+                    <div class="table-responsive">
+                      <table class="table align-middle">
+                        <thead>
+                          <tr>
+                            <th>Orden</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Total</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr t-foreach="orders" t-as="order">
+                            <td>
+                              <strong t-esc="order.name"/>
+                              <p class="text-muted small mb-0" t-esc="order.partner_shipping_id and order.partner_shipping_id.contact_address"/>
+                            </td>
+                            <td t-esc="order.date_order and order.date_order.strftime('%d/%m/%Y %H:%M')"/>
+                            <td>
+                              <span class="badge bg-success" t-if="order.state == 'sale'">Pagada</span>
+                              <span class="badge bg-secondary" t-if="order.state == 'done'">Completada</span>
+                            </td>
+                            <td>
+                              <strong>
+                                <t t-esc="order.amount_total"/>
+                                <t t-esc="order.currency_id.symbol"/>
+                              </strong>
+                            </td>
+                            <td class="text-end">
+                              <a class="btn btn-sm btn-outline-primary" t-att-href="'/fotoapp/orders/%s/downloads' % order.id">Descargar fotos</a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </t>
+                  <t t-else="">
+                    <p class="text-muted mb-0">Todavía no hay compras registradas.</p>
+                  </t>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </t>
+    </template>
+  </data>
+</odoo>

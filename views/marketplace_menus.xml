@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Top-level Marketplace menu -->
+    <menuitem id="menu_marketplace_root"
+              name="Marketplace"
+              web_icon="synara-marketplace,static/description/icon.png"
+              sequence="45"/>
+
+    <!-- Sellers -->
+    <menuitem id="menu_marketplace_sellers"
+              name="Vendedores"
+              parent="menu_marketplace_root"
+              action="action_marketplace_sellers"
+              sequence="10"/>
+
+    <!-- Commissions -->
+    <menuitem id="menu_marketplace_commissions_parent"
+              name="Comisiones"
+              parent="menu_marketplace_root"
+              sequence="20"/>
+
+    <menuitem id="menu_marketplace_commission_rules"
+              name="Reglas de comisión"
+              parent="menu_marketplace_commissions_parent"
+              action="action_commission_rules"
+              sequence="10"/>
+
+    <menuitem id="menu_marketplace_commission_lines"
+              name="Líneas de comisión"
+              parent="menu_marketplace_commissions_parent"
+              action="action_commission_lines"
+              sequence="20"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_marketplace_config"
+              name="Configuración"
+              parent="menu_marketplace_root"
+              sequence="90"/>
+
+    <menuitem id="menu_marketplace_settings"
+              name="Ajustes"
+              parent="menu_marketplace_config"
+              action="action_marketplace_settings"
+              sequence="10"/>
+</odoo>

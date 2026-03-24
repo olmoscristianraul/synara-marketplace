@@ -1,0 +1,463 @@
+<odoo>
+  <data>
+    <template id="gallery_categories" name="Galería Fotoapp">
+      <t t-call="website.layout">
+        <div id="wrap" class="oe_structure">
+          <section class="s_banner bg-200 pb64 pt64">
+            <div class="container text-center">
+              <h1 class="display-4">Galería de Eventos</h1>
+              <p class="lead">Explorá las categorías y eventos publicados por nuestros fotógrafos.</p>
+            </div>
+          </section>
+
+          <section class="s_cards pt32 pb48">
+            <div class="container">
+              <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h2 class="h3 mb-0">Categorías</h2>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                  <span class="text-muted" t-if="total_categories">
+                    Mostrando <t t-esc="len(categories)"/> de <t t-esc="total_categories"/> categorías publicadas
+                  </span>
+                  <span class="text-muted" t-else="">
+                    <t t-esc="len(categories)"/> categorías publicadas
+                  </span>
+                  <a class="btn btn-sm btn-outline-primary"
+                     t-if="total_categories and total_categories &gt; len(categories)"
+                     t-att-href="category_more_url or '/galeria/categorias'">
+                    Ver más
+                  </a>
+                </div>
+              </div>
+              <div class="row">
+                <t t-foreach="categories" t-as="category">
+                  <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                      <a t-attf-href="/galeria/categoria/#{ category.slug }">
+                        <img class="card-img-top"
+                           t-att-src="category.image_cover and '/web/image/tienda.foto.categoria/%s/image_cover' % category.id or '/web/static/img/placeholder.png'"
+                           t-att-alt="category.name"/>
+                      </a>
+                      <div class="card-body">
+                        <h3 class="h5">
+                          <a class="text-decoration-none" t-attf-href="/galeria/categoria/#{ category.slug }">
+                            <t t-esc="category.name"/>
+                          </a>
+                        </h3>
+                        <p class="text-muted mb-2" t-esc="category.website_description and category.website_description[:120]"/>
+                        <span class="badge bg-primary">
+                          <t t-esc="category.website_event_count or 0"/> eventos
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </t>
+                <t t-if="not categories">
+                  <div class="col-12 text-center text-muted">
+                    Todavía no hay categorías publicadas.
+                  </div>
+                </t>
+              </div>
+            </div>
+          </section>
+
+          <section class="py-5" t-if="recent_events">
+            <div class="container">
+              <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h2 class="h3 mb-0">Eventos recién publicados</h2>
+                <span class="text-muted" t-esc="len(recent_events)"/> seleccionados
+              </div>
+              <div class="row">
+                <t t-foreach="recent_events" t-as="recent">
+                  <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                      <a t-attf-href="/galeria/evento/#{ recent.website_slug }">
+                        <img class="card-img-top"
+                             t-att-src="recent.image_cover and '/web/image/tienda.foto.evento/%s/image_cover' % recent.id or '/web/static/img/placeholder.png'"
+                             t-att-alt="recent.name"/>
+                      </a>
+                      <div class="card-body">
+                        <p class="text-muted mb-1">
+                          <t t-esc="recent.fecha and recent.fecha.strftime('%d/%m/%Y')"/>
+                          ·
+                          <t t-esc="recent.ciudad"/>
+                          <t t-if="recent.ciudad and recent.estado_provincia">, </t>
+                          <t t-esc="recent.estado_provincia"/>
+                        </p>
+                        <h3 class="h6 mb-1">
+                          <a class="text-decoration-none" t-attf-href="/galeria/evento/#{ recent.website_slug }">
+                            <t t-esc="recent.name"/>
+                          </a>
+                        </h3>
+                        <p class="text-muted mb-0">Por <strong t-esc="recent.photographer_id.name"/></p>
+                      </div>
+                    </div>
+                  </div>
+                </t>
+              </div>
+            </div>
+          </section>
+
+          <section class="s_features py-5 bg-light" t-if="featured_events">
+            <div class="container">
+              <h2 class="h3 mb-4">Eventos destacados</h2>
+              <div class="row">
+                <t t-foreach="featured_events" t-as="event">
+                  <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                      <a t-attf-href="/galeria/evento/#{ event.website_slug }">
+                        <img class="card-img-top"
+                           t-att-src="event.image_cover and '/web/image/tienda.foto.evento/%s/image_cover' % event.id or '/web/static/img/placeholder.png'"
+                           t-att-alt="event.name"/>
+                      </a>
+                      <div class="card-body">
+                        <p class="text-muted mb-1">
+                          <t t-esc="event.fecha and event.fecha.strftime('%d/%m/%Y')"/>
+                        </p>
+                        <h3 class="h5">
+                          <a t-attf-href="/galeria/evento/#{ event.website_slug }" class="text-decoration-none">
+                            <t t-esc="event.name"/>
+                          </a>
+                        </h3>
+                        <p class="mb-0 text-muted">Por <t t-esc="event.photographer_id.name"/></p>
+                      </div>
+                    </div>
+                  </div>
+                </t>
+              </div>
+            </div>
+          </section>
+        </div>
+      </t>
+    </template>
+
+    <template id="gallery_category_list" name="Listado completo de categorías">
+      <t t-call="website.layout">
+        <div id="wrap" class="oe_structure">
+          <section class="s_banner bg-200 pb48 pt48">
+            <div class="container">
+              <nav aria-label="breadcrumb" class="mb-3" t-if="breadcrumb">
+                <ol class="breadcrumb">
+                  <t t-foreach="breadcrumb" t-as="item">
+                    <li t-if="item.get('url')" class="breadcrumb-item">
+                      <a t-att-href="item.get('url')" t-esc="item.get('label')"/>
+                    </li>
+                    <li t-else="" class="breadcrumb-item active" aria-current="page">
+                      <t t-esc="item.get('label')"/>
+                    </li>
+                  </t>
+                </ol>
+              </nav>
+              <h1 class="display-5">Todas las categorías</h1>
+              <p class="lead mb-0">Accedé al listado completo de categorías disponibles en la galería.</p>
+            </div>
+          </section>
+
+          <section class="s_cards pt32 pb48">
+            <div class="container">
+              <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h2 class="h3 mb-0">Categorías disponibles</h2>
+                <span class="text-muted">
+                  <t t-esc="total_categories or len(categories) or 0"/> categorías publicadas
+                </span>
+              </div>
+              <div class="row">
+                <t t-foreach="categories" t-as="category">
+                  <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                      <a t-attf-href="/galeria/categoria/#{ category.slug }">
+                        <img class="card-img-top"
+                           t-att-src="category.image_cover and '/web/image/tienda.foto.categoria/%s/image_cover' % category.id or '/web/static/img/placeholder.png'"
+                           t-att-alt="category.name"/>
+                      </a>
+                      <div class="card-body">
+                        <h3 class="h5">
+                          <a class="text-decoration-none" t-attf-href="/galeria/categoria/#{ category.slug }">
+                            <t t-esc="category.name"/>
+                          </a>
+                        </h3>
+                        <p class="text-muted mb-2" t-esc="category.website_description and category.website_description[:120]"/>
+                        <span class="badge bg-primary">
+                          <t t-esc="category.website_event_count or 0"/> eventos
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </t>
+                <t t-if="not categories">
+                  <div class="col-12 text-center text-muted">
+                    Todavía no hay categorías publicadas.
+                  </div>
+                </t>
+              </div>
+            </div>
+          </section>
+        </div>
+      </t>
+    </template>
+
+    <template id="gallery_category_detail" name="Detalle de categoría">
+      <t t-call="website.layout">
+        <div id="wrap" class="oe_structure">
+          <section class="s_banner pb64 pt64 text-white" t-att-style="'background-image:url(%s); background-size:cover; background-position:center;' % ('/web/image/tienda.foto.categoria/%s/image_cover' % category.id if category.image_cover else '/web/static/img/placeholder.png')">
+            <div class="container">
+              <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="/galeria">Galería</a></li>
+                  <li class="breadcrumb-item active" aria-current="page"><t t-esc="category.name"/></li>
+                </ol>
+              </nav>
+              <h1 class="display-5"><t t-esc="category.name"/></h1>
+              <div class="lead" t-raw="category.website_description"/>
+            </div>
+          </section>
+
+          <section class="py-5">
+            <div class="container">
+              <h2 class="h4 mb-4">Eventos publicados</h2>
+              <div class="row">
+                <t t-foreach="events" t-as="event">
+                  <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                      <a t-attf-href="/galeria/evento/#{ event.website_slug }">
+                        <img class="card-img-top"
+                           t-att-src="event.image_cover and '/web/image/tienda.foto.evento/%s/image_cover' % event.id or '/web/static/img/placeholder.png'"
+                           t-att-alt="event.name"/>
+                      </a>
+                      <div class="card-body">
+                        <p class="text-muted mb-1">
+                          <t t-esc="event.fecha and event.fecha.strftime('%d/%m/%Y')"/>
+                        </p>
+                        <h3 class="h5">
+                          <a class="text-decoration-none" t-attf-href="/galeria/evento/#{ event.website_slug }">
+                            <t t-esc="event.name"/>
+                          </a>
+                        </h3>
+                        <p class="mb-0 text-muted">Por <t t-esc="event.photographer_id.name"/></p>
+                      </div>
+                    </div>
+                  </div>
+                </t>
+                <t t-if="not events">
+                  <div class="col-12 text-center text-muted">
+                    No hay eventos publicados en esta categoría.
+                  </div>
+                </t>
+              </div>
+            </div>
+          </section>
+        </div>
+      </t>
+    </template>
+
+    <template id="gallery_event_detail" name="Detalle de evento">
+      <t t-call="website.layout">
+        <div id="wrap" class="oe_structure">
+          <section class="s_banner pb64 pt64 text-white" t-att-style="'background-image:url(%s); background-size:cover; background-position:center;' % ('/web/image/tienda.foto.evento/%s/image_cover' % event.id if event.image_cover else '/web/static/img/placeholder.png')">
+            <div class="container">
+              <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="/galeria">Galería</a></li>
+                  <li class="breadcrumb-item">
+                    <a t-attf-href="/galeria/categoria/#{ event.categoria_id.slug }">
+                      <t t-esc="event.categoria_id.name"/>
+                    </a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page"><t t-esc="event.name"/></li>
+                </ol>
+              </nav>
+              <h1 class="display-5"><t t-esc="event.name"/></h1>
+              <p class="lead mb-1">
+                <t t-esc="event.fecha and event.fecha.strftime('%d/%m/%Y')"/>
+                · <t t-esc="event.ciudad"/> <t t-if="event.estado_provincia">- <t t-esc="event.estado_provincia"/></t>
+                · Por <strong t-esc="event.photographer_id.name"/>
+              </p>
+              <div class="text-white-50" t-raw="event.descripcion"/>
+            </div>
+          </section>
+
+          <section class="py-5">
+            <div class="container">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h4 mb-0">Álbumes disponibles</h2>
+                <span class="text-muted" t-esc="len(albums)"/> álbumes publicados
+              </div>
+              <div class="row">
+                <t t-foreach="albums" t-as="album">
+                  <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                      <t t-set="cover_asset" t-value="album.asset_ids[:1]"/>
+                      <a t-attf-href="/galeria/evento/#{ event.website_slug }/album/#{ album.id }">
+                        <img class="card-img-top"
+                             t-att-src="cover_asset and '/web/image/tienda.foto.asset/%s/imagen_watermark' % cover_asset.id or '/web/static/img/placeholder.png'"
+                             t-att-alt="album.name"/>
+                      </a>
+                      <div class="card-body">
+                        <p class="text-muted mb-1">Álbum</p>
+                        <h3 class="h5">
+                          <a class="text-decoration-none" t-attf-href="/galeria/evento/#{ event.website_slug }/album/#{ album.id }">
+                            <t t-esc="album.name"/>
+                          </a>
+                        </h3>
+                        <p class="mb-1 text-muted"><t t-esc="album.asset_count"/> fotos</p>
+                        <t t-if="album.asset_ids">
+                          <p class="mb-0 text-muted">
+                            Desde
+                            <t t-set="album_prices" t-value="album.asset_ids.mapped('precio')"/>
+                            <t t-esc="min(album_prices)"/> <t t-esc="album.asset_ids[0].currency_id.symbol"/>
+                          </p>
+                        </t>
+                      </div>
+                    </div>
+                  </div>
+                </t>
+                <t t-if="not albums">
+                  <div class="col-12 text-center text-muted">
+                    Todavía no hay álbumes publicados para este evento.
+                  </div>
+                </t>
+              </div>
+            </div>
+          </section>
+        </div>
+      </t>
+    </template>
+
+    <template id="gallery_album_detail" name="Detalle de álbum público">
+      <t t-call="website.layout">
+        <div id="wrap" class="oe_structure">
+          <section class="s_banner pb48 pt48 text-white" t-att-style="'background-image:url(%s); background-size:cover; background-position:center;' % ('/web/image/tienda.foto.evento/%s/image_cover' % event.id if event.image_cover else '/web/static/img/placeholder.png')">
+            <div class="container">
+              <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="/galeria">Galería</a></li>
+                  <li class="breadcrumb-item"><a t-attf-href="/galeria/categoria/#{ event.categoria_id.slug }"><t t-esc="event.categoria_id.name"/></a></li>
+                  <li class="breadcrumb-item"><a t-attf-href="/galeria/evento/#{ event.website_slug }"><t t-esc="event.name"/></a></li>
+                  <li class="breadcrumb-item active" aria-current="page"><t t-esc="album.name"/></li>
+                </ol>
+              </nav>
+              <h1 class="display-5 mb-2"><t t-esc="album.name"/></h1>
+              <p class="lead mb-0">
+                Evento: <strong t-esc="event.name"/> · <t t-esc="album.asset_count"/> fotos publicadas
+              </p>
+            </div>
+          </section>
+
+          <section class="py-5">
+            <div class="container">
+              <div class="row">
+                <t t-foreach="photos" t-as="photo">
+                  <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                      <img class="card-img-top"
+                           t-att-src="'/web/image/tienda.foto.asset/%s/imagen_watermark' % photo.id"
+                           t-att-alt="photo.name or (photo.numero_dorsal and ('Foto %s' % photo.numero_dorsal)) or album.name"/>
+                      <div class="card-body">
+                        <p class="h6 mb-1" t-esc="photo.name or ('Foto %s' % (photo.numero_dorsal or photo.id))"/>
+                        <p class="text-muted mb-1">#<t t-esc="photo.numero_dorsal or photo.id"/></p>
+                        <p class="text-muted mb-1">Por <strong t-esc="photo.photographer_id.name"/></p>
+                        <p class="text-muted mb-3 mb-sm-2"><t t-esc="photo.precio"/> <t t-esc="photo.currency_id.symbol"/></p>
+                        <form method="post" t-attf-action="/galeria/foto/#{ photo.id }/cart/add" class="d-grid">
+                          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                          <input type="hidden" name="redirect" t-att-value="'/galeria/evento/%s/album/%s' % (event.website_slug, album.id)"/>
+                          <button type="submit" class="btn btn-sm btn-primary">Agregar al carrito</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </t>
+                <t t-if="not photos">
+                  <div class="col-12 text-center text-muted">
+                    Aún no hay fotos publicadas en este álbum.
+                  </div>
+                </t>
+              </div>
+            </div>
+          </section>
+        </div>
+      </t>
+    </template>
+
+    <template id="gallery_category_create" name="Crear categoría">
+      <t t-call="website.layout">
+        <div id="wrap" class="oe_structure">
+          <section class="py-5 bg-200">
+            <div class="container">
+              <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="/galeria">Galería</a></li>
+                </ol>
+              </nav>
+              <div class="card shadow-sm">
+                <div class="card-body">
+                  <h1 class="h4 mb-4">Crear categoría</h1>
+                  <t t-if="errors">
+                    <div class="alert alert-danger" role="alert">
+                      <ul class="mb-0">
+                        <li t-foreach="errors" t-as="error" t-esc="error"/>
+                      </ul>
+                    </div>
+                  </t>
+                  <form method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="row g-4">
+                      <div class="col-md-6">
+                        <label class="form-label" for="category_name">Nombre *</label>
+                        <input type="text" class="form-control" name="name" id="category_name" t-att-value="default.get('name')" required="required"/>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label" for="category_cover">Imagen de portada *</label>
+                        <input type="file" class="form-control" name="image_cover" id="category_cover" accept="image/*" required="required"/>
+                      </div>
+                      <div class="col-md-12">
+                        <label class="form-label" for="category_short">Descripción interna</label>
+                        <textarea class="form-control" name="description" id="category_short" rows="2"><t t-esc="default.get('description')"/></textarea>
+                      </div>
+                      <div class="col-md-12">
+                        <label class="form-label" for="category_site">Descripción para el sitio</label>
+                        <textarea class="form-control" name="website_description" id="category_site" rows="4"><t t-esc="default.get('website_description')"/></textarea>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" id="publish_now" name="publish_now" value="1" t-att-checked="'checked' if default.get('publish_now') else None"/>
+                          <label class="form-check-label" for="publish_now">Publicar inmediatamente</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                      <button type="submit" class="btn btn-primary">Guardar categoría</button>
+                      <a href="/galeria" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </t>
+    </template>
+
+    <record id="menu_fotografo" model="website.menu">
+      <field name="name">Panel De Fotografo</field>
+      <field name="url">/mi/fotoapp</field>
+      <field name="parent_id" ref="website.main_menu"/>
+      <field name="sequence">60</field>
+      <field name="is_visible">True</field>
+    </record>
+
+    <record id="menu_gallery" model="website.menu">
+      <field name="name">Galería</field>
+      <field name="url">/galeria</field>
+      <field name="parent_id" ref="website.main_menu"/>
+      <field name="sequence">20</field>
+      <field name="is_visible">True</field>
+    </record>
+
+    <record id="menu_planes" model="website.menu">
+      <field name="name">Planes</field>
+      <field name="url">/planesfotografo</field>
+      <field name="parent_id" ref="website.main_menu"/>
+      <field name="sequence">30</field>
+      <field name="is_visible">True</field>
+    </record>
+  </data>
+</odoo>

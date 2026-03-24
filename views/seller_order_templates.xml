@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!--  Seller Order Portal Templates                        -->
+    <!-- ══════════════════════════════════════════════════════ -->
+
+    <!-- Order List -->
+    <template id="seller_orders" name="Pedidos del vendedor">
+        <t t-call="website.layout">
+            <div class="container py-4">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <t t-call="synara-marketplace.seller_sidebar"/>
+                    </div>
+                    <div class="col-lg-9">
+                        <h2 class="mb-4"><i class="fa fa-shopping-cart me-2"/>Mis pedidos</h2>
+                        <t t-if="orders">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Pedido</th>
+                                            <th>Fecha</th>
+                                            <th>Cliente</th>
+                                            <th class="text-end">Total venta</th>
+                                            <th class="text-end">Tu pago</th>
+                                            <th class="text-end">Comisión</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="orders" t-as="order">
+                                            <tr>
+                                                <td>
+                                                    <a t-attf-href="/mi/marketplace/pedidos/#{order.id}">
+                                                        <t t-esc="order.name"/>
+                                                    </a>
+                                                </td>
+                                                <td><t t-esc="order.date_order" t-options="{'widget': 'date'}"/></td>
+                                                <td><t t-esc="order.partner_id.display_name"/></td>
+                                                <td class="text-end">
+                                                    <t t-esc="order.amount_total" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
+                                                </td>
+                                                <td class="text-end text-success">
+                                                    <t t-esc="order.marketplace_seller_amount" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
+                                                </td>
+                                                <td class="text-end text-warning">
+                                                    <t t-esc="order.marketplace_platform_amount" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
+                                                </td>
+                                                <td>
+                                                    <span class="badge text-bg-success"><t t-esc="order.state"/></span>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="alert alert-info text-center py-5">
+                                <h4>No tenés pedidos todavía</h4>
+                                <p>Cuando un cliente compre uno de tus productos, aparecerá acá.</p>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Order Detail -->
+    <template id="seller_order_detail" name="Detalle de pedido">
+        <t t-call="website.layout">
+            <div class="container py-4">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <t t-call="synara-marketplace.seller_sidebar"/>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2>
+                                <i class="fa fa-file-text me-2"/>Pedido <t t-esc="order.name"/>
+                            </h2>
+                            <a href="/mi/marketplace/pedidos" class="btn btn-outline-secondary">
+                                <i class="fa fa-arrow-left me-2"/>Volver
+                            </a>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header"><h5 class="mb-0">Datos del cliente</h5></div>
+                                    <div class="card-body">
+                                        <p><strong>Nombre:</strong> <t t-esc="order.partner_id.display_name"/></p>
+                                        <p><strong>Email:</strong> <t t-esc="order.partner_id.email or 'N/A'"/></p>
+                                        <p><strong>Teléfono:</strong> <t t-esc="order.partner_id.phone or 'N/A'"/></p>
+                                        <t t-if="order.partner_shipping_id">
+                                            <hr/>
+                                            <p><strong>Dirección de envío:</strong></p>
+                                            <address>
+                                                <t t-esc="order.partner_shipping_id.street or ''"/><br/>
+                                                <t t-esc="order.partner_shipping_id.city or ''"/>
+                                                <t t-if="order.partner_shipping_id.state_id">,
+                                                    <t t-esc="order.partner_shipping_id.state_id.name"/>
+                                                </t><br/>
+                                                <t t-esc="order.partner_shipping_id.zip or ''"/>
+                                                <t t-if="order.partner_shipping_id.country_id">
+                                                    - <t t-esc="order.partner_shipping_id.country_id.name"/>
+                                                </t>
+                                            </address>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header"><h5 class="mb-0">Resumen financiero</h5></div>
+                                    <div class="card-body">
+                                        <p>
+                                            <strong>Total de la venta:</strong>
+                                            <span class="float-end">
+                                                <t t-esc="order.amount_total" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
+                                            </span>
+                                        </p>
+                                        <p>
+                                            <strong>Comisión plataforma (<t t-esc="order.marketplace_commission_percent"/>%):</strong>
+                                            <span class="float-end text-warning">
+                                                - <t t-esc="order.marketplace_platform_amount" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
+                                            </span>
+                                        </p>
+                                        <hr/>
+                                        <p class="h5">
+                                            <strong>Tu pago:</strong>
+                                            <span class="float-end text-success">
+                                                <t t-esc="order.marketplace_seller_amount" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Lines -->
+                        <div class="card">
+                            <div class="card-header"><h5 class="mb-0">Productos</h5></div>
+                            <div class="card-body p-0">
+                                <table class="table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th class="text-center">Cantidad</th>
+                                            <th class="text-end">Precio unitario</th>
+                                            <th class="text-end">Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="order.order_line" t-as="line">
+                                            <tr>
+                                                <td><t t-esc="line.product_id.display_name"/></td>
+                                                <td class="text-center"><t t-esc="int(line.product_uom_qty)"/></td>
+                                                <td class="text-end">
+                                                    <t t-esc="line.price_unit" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
+                                                </td>
+                                                <td class="text-end">
+                                                    <t t-esc="line.price_subtotal" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

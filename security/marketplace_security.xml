@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Marketplace Admin Group -->
+    <record id="group_marketplace_admin" model="res.groups">
+        <field name="name">Marketplace / Administrador</field>
+        <field name="category_id" ref="base.module_category_sales"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Record Rules: Sellers see only their own data -->
+    <record id="rule_commission_line_seller" model="ir.rule">
+        <field name="name">Commission Lines: Seller sees own</field>
+        <field name="model_id" ref="model_marketplace_commission_line"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="domain_force">[('seller_id', '=', user.partner_id.id)]</field>
+    </record>
+
+    <record id="rule_commission_line_internal" model="ir.rule">
+        <field name="name">Commission Lines: Internal users see all</field>
+        <field name="model_id" ref="model_marketplace_commission_line"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <record id="rule_product_template_seller" model="ir.rule">
+        <field name="name">Products: Seller sees own marketplace products</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="domain_force">['|', ('marketplace_seller_id', '=', False), ('marketplace_seller_id', '=', user.partner_id.id)]</field>
+    </record>
+</odoo>
