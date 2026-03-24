@@ -58,6 +58,10 @@
         <field name="model">marketplace.commission.line</field>
         <field name="arch" type="xml">
             <list string="Líneas de comisión">
+                <header>
+                    <button name="action_generate_invoices" string="Facturar comisiones" type="object"
+                            class="oe_highlight"/>
+                </header>
                 <field name="sale_date"/>
                 <field name="seller_id"/>
                 <field name="sale_order_name"/>
@@ -80,6 +84,8 @@
         <field name="arch" type="xml">
             <form string="Línea de comisión">
                 <header>
+                    <button name="action_generate_invoices" string="Facturar comisiones" type="object"
+                            class="oe_highlight" invisible="state != 'pending'"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
@@ -139,6 +145,7 @@
         <field name="name">Comisiones</field>
         <field name="res_model">marketplace.commission.line</field>
         <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_commission_line_tree"/>
         <field name="search_view_id" ref="view_commission_line_search"/>
     </record>
 
@@ -146,7 +153,7 @@
         <field name="name">Facturar comisiones</field>
         <field name="model_id" ref="model_marketplace_commission_line"/>
         <field name="binding_model_id" ref="model_marketplace_commission_line"/>
-        <field name="binding_view_types">list</field>
+        <field name="binding_view_types">list,form</field>
         <field name="state">code</field>
         <field name="groups_id" eval="[(4, ref('group_marketplace_admin'))]"/>
         <field name="code">

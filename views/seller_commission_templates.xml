@@ -72,9 +72,12 @@
                                                 <span class="badge rounded-pill bg-warning text-dark">Pendiente</span>
                                             </t>
                                             <t t-elif="line.state == 'invoiced'">
-                                                <span class="badge rounded-pill bg-success">Facturada</span>
+                                                <span class="badge rounded-pill bg-success mb-1">Facturada</span>
                                                 <t t-if="line.invoice_id">
-                                                    <small class="d-block text-muted mt-1"><t t-esc="line.invoice_id.name"/></small>
+                                                    <a t-attf-href="/my/invoices/#{line.invoice_id.id}" class="d-block text-decoration-none small" target="_blank">
+                                                        <i class="fa fa-file-pdf-o me-1 text-danger"/>
+                                                        <t t-esc="line.invoice_id.name"/>
+                                                    </a>
                                                 </t>
                                             </t>
                                             <t t-elif="line.state == 'paid'">

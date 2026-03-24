@@ -219,7 +219,7 @@ class MarketplaceCommissionLine(models.Model):
             sellers.setdefault(line.seller_id.id, self.env['marketplace.commission.line'])
             sellers[line.seller_id.id] |= line
 
-        AccountMove = self.env['account.move'].with_context(default_move_type='out_invoice')
+        AccountMove = self.env['account.move'].sudo().with_context(default_move_type='out_invoice')
 
         for seller_id, seller_lines in sellers.items():
             seller = self.env['res.partner'].browse(seller_id)
