@@ -81,10 +81,27 @@
                             <h2>
                                 <i class="fa fa-file-text me-2"/>Pedido <t t-esc="order.name"/>
                             </h2>
-                            <a href="/mi/marketplace/pedidos" class="btn btn-outline-secondary">
-                                <i class="fa fa-arrow-left me-2"/>Volver
-                            </a>
+                            <div>
+                                <t t-if="order.state in ['sale', 'done']">
+                                    <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#modalDelivered">
+                                        <i class="fa fa-check me-1"/> Marcar Entregado
+                                    </button>
+                                    <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#modalInvoice">
+                                        <i class="fa fa-upload me-1"/> Subir Factura
+                                    </button>
+                                </t>
+                                <a href="/mi/marketplace/pedidos" class="btn btn-outline-secondary">
+                                    <i class="fa fa-arrow-left me-2"/>Volver
+                                </a>
+                            </div>
                         </div>
+
+                        <t t-if="flash">
+                            <div class="alert alert-success alert-dismissible mb-4">
+                                <t t-esc="flash"/>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        </t>
 
                         <div class="row mb-4">
                             <div class="col-md-6">
@@ -170,6 +187,54 @@
                                 </table>
                             </div>
                         </div>
+
+                        <!-- Modals de Acciones sobre el Pedido -->
+                        <div class="modal fade" id="modalDelivered" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Confirmar Entrega</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        ¿Estás seguro que deseas marcar este pedido como entregado? Esto notificará a la plataforma que el producto ya fue despachado.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form method="POST" t-attf-action="/mi/marketplace/pedidos/#{order.id}/marcar_entregado">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-success">Confirmar Entrega</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="modalInvoice" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form method="POST" t-attf-action="/mi/marketplace/pedidos/#{order.id}/subir_factura" enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Subir Factura</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Archivo PDF / Imagen</label>
+                                                <input class="form-control" type="file" name="invoice_file" required="required"/>
+                                            </div>
+                                            <p class="text-muted small">El administrador y el cliente podrán descargar este documento desde el seguimiento del pedido.</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-primary">Subir Archivo</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

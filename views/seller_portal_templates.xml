@@ -87,6 +87,10 @@
                t-attf-class="list-group-item list-group-item-action #{'active' if active_menu == 'dashboard' else ''}">
                 <i class="fa fa-tachometer me-2"/>Dashboard
             </a>
+            <a t-attf-href="/mi/marketplace/productos"
+               t-attf-class="list-group-item list-group-item-action #{'active' if active_menu == 'products' else ''}">
+                <i class="fa fa-cubes me-2"/>Mis productos
+            </a>
             <a t-attf-href="/mi/marketplace/pedidos"
                t-attf-class="list-group-item list-group-item-action #{'active' if active_menu == 'orders' else ''}">
                 <i class="fa fa-shopping-cart me-2"/>Pedidos
