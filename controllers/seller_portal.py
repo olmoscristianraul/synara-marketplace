@@ -279,12 +279,156 @@ class SellerPortalController(http.Controller):
         if not order.exists() or order.marketplace_seller_id.id != partner.id:
             return request.redirect('/mi/marketplace/pedidos')
 
+        flash = request.session.pop('marketplace_order_flash', False)
+        
         values = {
             'partner': partner,
             'order': order,
+            'flash': flash,
             'active_menu': 'orders',
         }
         return request.render('synara-marketplace.seller_order_detail', values)
+
+    @http.route(
+        ['/mi/marketplace/pedidos/<int:order_id>/marcar_entregado'],
+        type='http', auth='user', website=True, methods=['POST']
+    )
+    def seller_order_mark_delivered(self, order_id, **post):
+        partner, denied = self._ensure_seller()
+        if not partner: return denied
+        
+        order = request.env['sale.order'].sudo().browse(order_id)
+        if order.exists() and order.marketplace_seller_id.id == partner.id:
+            order.message_post(body="El vendedor ha marcado este pedido como entregado.")
+            
+            # Intentar procesar remitos si el módulo de stock está instalado
+            if hasattr(order, 'picking_ids'):
+                pickings = order.picking_ids.filtered(lambda p: p.state not in ('done', 'cancel'))
+                for picking in pickings:
+                    try:
+                        picking.action_assign()
+                        for move in picking.move_ids_without_package:
+                            move.quantity = move.product_uom_qty
+                        picking.button_validate()
+                    except Exception as e:
+                        _logger.warning('Marketplace Delivery Warning: %s', e)
+            
+            request.session['marketplace_order_flash'] = 'Pedido marcado como entregado.'
+        return request.redirect(f'/mi/marketplace/pedidos/{order_id}')
+
+    @http.route(
+        ['/mi/marketplace/pedidos/<int:order_id>/subir_factura'],
+        type='http', auth='user', website=True, methods=['POST']
+    )
+    def seller_order_upload_invoice(self, order_id, **post):
+        partner, denied = self._ensure_seller()
+        if not partner: return denied
+        
+        order = request.env['sale.order'].sudo().browse(order_id)
+        if order.exists() and order.marketplace_seller_id.id == partner.id:
+            invoice_file = request.httprequest.files.get('invoice_file')
+            if invoice_file and invoice_file.filename:
+                attachment = request.env['ir.attachment'].sudo().create({
+                    'name': invoice_file.filename,
+                    'type': 'binary',
+                    'datas': base64.b64encode(invoice_file.read()),
+                    'res_model': 'sale.order',
+                    'res_id': order.id,
+                })
+                order.message_post(body="El vendedor adjuntó la factura.", attachment_ids=[attachment.id])
+                request.session['marketplace_order_flash'] = 'Factura subida exitosamente.'
+        return request.redirect(f'/mi/marketplace/pedidos/{order_id}')
+
+    # ── Products CRUD ──
+    @http.route(
+        ['/mi/marketplace/productos'],
+        type='http', auth='user', website=True,
+    )
+    def seller_products(self, **kw):
+        partner, denied = self._ensure_seller()
+        if not partner: return denied
+
+        products = request.env['product.template'].sudo().search([
+            ('marketplace_seller_id', '=', partner.id),
+        ], order='create_date desc')
+
+        values = {
+            'partner': partner,
+            'products': products,
+            'flash': request.session.pop('marketplace_product_flash', False),
+            'active_menu': 'products',
+        }
+        return request.render('synara-marketplace.seller_products_list', values)
+
+    @http.route(
+        ['/mi/marketplace/productos/nuevo', '/mi/marketplace/productos/editar/<int:product_id>'],
+        type='http', auth='user', website=True, methods=['GET', 'POST']
+    )
+    def seller_product_form(self, product_id=None, **post):
+        partner, denied = self._ensure_seller()
+        if not partner: return denied
+
+        Product = request.env['product.template'].sudo()
+        product = Product.browse(product_id) if product_id else Product
+
+        if product_id and (not product.exists() or product.marketplace_seller_id.id != partner.id):
+            return request.redirect('/mi/marketplace/productos')
+
+        if request.httprequest.method == 'POST':
+            name = post.get('name')
+            list_price = float(post.get('list_price') or 0.0)
+            stock_qty = float(post.get('stock_qty') or 0.0)
+            description_sale = post.get('description_sale') or ''
+            
+            vals = {
+                'name': name,
+                'list_price': list_price,
+                'description_sale': description_sale,
+                'detailed_type': 'product',
+                'marketplace_seller_id': partner.id,
+                'is_published': True,
+            }
+            if not product_id:
+                vals['marketplace_approved'] = False
+            
+            image_file = request.httprequest.files.get('image_1920')
+            if image_file and image_file.filename:
+                vals['image_1920'] = base64.b64encode(image_file.read())
+
+            if product_id:
+                product.write(vals)
+                msg = 'Producto actualizado.'
+            else:
+                product = Product.create(vals)
+                msg = 'Producto creado. Pendiente de aprobación por admin.'
+
+            # Actualizar stock
+            if 'stock_qty' in post:
+                try:
+                    warehouse = request.env['stock.warehouse'].sudo().search([('company_id', '=', product.company_id.id)], limit=1)
+                    if warehouse:
+                        location = warehouse.lot_stock_id
+                        quant = request.env['stock.quant'].sudo().with_context(inventory_mode=True).create({
+                            'product_id': product.product_variant_id.id,
+                            'location_id': location.id,
+                            'inventory_quantity': stock_qty,
+                        })
+                        quant.action_apply_inventory()
+                except Exception as e:
+                    _logger.warning('Failed to update stock: %s', e)
+
+            request.session['marketplace_product_flash'] = msg
+            return request.redirect('/mi/marketplace/productos')
+
+        current_stock = product.qty_available if product_id and hasattr(product, 'qty_available') else 0.0
+
+        values = {
+            'partner': partner,
+            'product': product,
+            'current_stock': current_stock,
+            'active_menu': 'products',
+        }
+        return request.render('synara-marketplace.seller_product_form', values)
 
     # ── Commissions ──
     @http.route(

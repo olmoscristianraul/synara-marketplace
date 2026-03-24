@@ -108,7 +108,7 @@ class PaymentTransaction(models.Model):
         for tx in self:
             if tx.marketplace_seller_id:
                 continue
-            orders = tx.sale_order_ids
+            orders = tx.sudo().sale_order_ids
             if not orders:
                 continue
             sellers = orders.mapped('order_line.product_id.product_tmpl_id.marketplace_seller_id')

@@ -1,8 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <!-- ══════════════════════════════════════════════════════ -->
-    <!--  This file is intentionally minimal.                  -->
-    <!--  Product management is done by admins in the backend. -->
-    <!--  The seller sees their products in the dashboard.     -->
-    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- Filtro de vendedores en la barra lateral del shop -->
+    <template id="products_attributes_seller" inherit_id="website_sale.products_attributes">
+        <xpath expr="//div[@id='wsale_products_attributes_collapse']" position="inside">
+            <t t-if="marketplace_sellers">
+                <div class="accordion-item nav-item mb-2 border-0">
+                    <h6 class="accordion-header mb-0"><b>Vendedor</b></h6>
+                    <div class="accordion-collapse collapse show">
+                        <ul class="nav nav-pills flex-column mt-2">
+                            <!-- Opción Todos -->
+                            <li class="nav-item mb-1">
+                                <div class="form-check d-inline-block">
+                                    <input type="radio"
+                                           class="form-check-input"
+                                           name="seller_id"
+                                           value=""
+                                           t-att-checked="'checked' if not selected_seller_id else None"
+                                           id="seller_all"
+                                           onchange="this.form.submit()"/>
+                                    <label class="form-check-label fw-normal" for="seller_all">Todos</label>
+                                </div>
+                            </li>
+                            <!-- Vendedores -->
+                            <t t-foreach="marketplace_sellers" t-as="seller">
+                                <li class="nav-item mb-1">
+                                    <div class="form-check d-inline-block">
+                                        <input type="radio"
+                                               class="form-check-input"
+                                               name="seller_id"
+                                               t-att-value="seller.id"
+                                               t-att-checked="'checked' if selected_seller_id == seller.id else None"
+                                               t-att-id="'seller_%s' % seller.id"
+                                               onchange="this.form.submit()"/>
+                                        <label class="form-check-label fw-normal" t-att-for="'seller_%s' % seller.id">
+                                            <t t-esc="seller.seller_store_name or seller.name"/>
+                                        </label>
+                                    </div>
+                                </li>
+                            </t>
+                        </ul>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Nombre del vendedor en la tarjeta de producto (/shop) -->
+    <template id="products_item_marketplace" inherit_id="website_sale.products_item">
+        <xpath expr="//div[hasclass('product_price')]" position="before">
+            <t t-if="product.marketplace_seller_id">
+                <div class="text-muted small mt-1 mb-1">
+                    <i class="fa fa-store me-1"/> <t t-esc="product.sudo().marketplace_seller_id.seller_store_name or product.sudo().marketplace_seller_id.name"/>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Nombre del vendedor en la página de detalle del producto -->
+    <template id="product_marketplace" inherit_id="website_sale.product">
+        <xpath expr="//div[@id='product_details']//h1" position="after">
+            <t t-if="product.marketplace_seller_id">
+                <div class="mb-3 text-muted">
+                    <i class="fa fa-store me-2"/>Vendido por: 
+                    <strong><t t-esc="product.sudo().marketplace_seller_id.seller_store_name or product.sudo().marketplace_seller_id.name"/></strong>
+                </div>
+            </t>
+        </xpath>
+    </template>
 </odoo>
