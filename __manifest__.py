@@ -20,6 +20,8 @@
         'website_sale',
         'portal',
         'mail',
+        'stock',
+        'sale_stock',
         'payment_mercado_pago',
     ],
 
@@ -36,6 +38,7 @@
         'views/seller_product_templates.xml',
         'views/seller_order_templates.xml',
         'views/seller_commission_templates.xml',
+        'views/seller_bulk_templates.xml',
         # 3. Data
         'data/marketplace_data.xml',
     ],

@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import base64
 import logging
+import csv
+import io
 import re
 
-from odoo import http, fields, _
+from odoo import http, _, fields, _
 from odoo.http import request
 
 _logger = logging.getLogger(__name__)
@@ -188,6 +190,11 @@ class SellerPortalController(http.Controller):
             'product_count': len(products),
             'products': products,
             'order_count': len(recent_orders),
+            'pending_deliveries': SaleOrder.search_count([
+                ('marketplace_seller_id', '=', partner.id),
+                ('state', 'in', ('sale', 'done')),
+                ('marketplace_delivery_status', '=', 'pending'),
+            ]),
             'recent_orders': recent_orders,
             'active_menu': 'dashboard',
         }
@@ -259,9 +266,18 @@ class SellerPortalController(http.Controller):
             ('state', 'in', ('sale', 'done')),
         ], order='date_order desc')
 
+        # Counts for sidebar badges
+        SaleOrder = request.env['sale.order'].sudo()
+        pending_deliveries = SaleOrder.search_count([
+            ('marketplace_seller_id', '=', partner.id),
+            ('state', 'in', ('sale', 'done')),
+            ('marketplace_delivery_status', '=', 'pending'),
+        ])
+        
         values = {
             'partner': partner,
             'orders': orders,
+            'pending_deliveries': pending_deliveries,
             'active_menu': 'orders',
         }
         return request.render('synara-marketplace.seller_orders', values)
@@ -299,6 +315,7 @@ class SellerPortalController(http.Controller):
         
         order = request.env['sale.order'].sudo().browse(order_id)
         if order.exists() and order.marketplace_seller_id.id == partner.id:
+            order.write({'marketplace_delivery_status': 'shipped'})
             order.message_post(body="El vendedor ha marcado este pedido como entregado.")
             
             # Intentar procesar remitos si el módulo de stock está instalado
@@ -352,9 +369,18 @@ class SellerPortalController(http.Controller):
             ('marketplace_seller_id', '=', partner.id),
         ], order='create_date desc')
 
+        # Counts for sidebar badges
+        SaleOrder = request.env['sale.order'].sudo()
+        pending_deliveries = SaleOrder.search_count([
+            ('marketplace_seller_id', '=', partner.id),
+            ('state', 'in', ('sale', 'done')),
+            ('marketplace_delivery_status', '=', 'pending'),
+        ])
+
         values = {
             'partner': partner,
             'products': products,
+            'pending_deliveries': pending_deliveries,
             'flash': request.session.pop('marketplace_product_flash', False),
             'active_menu': 'products',
         }
@@ -377,16 +403,20 @@ class SellerPortalController(http.Controller):
         if request.httprequest.method == 'POST':
             name = post.get('name')
             list_price = float(post.get('list_price') or 0.0)
+            promo_price = float(post.get('promo_price') or 0.0)
+            shipping_cost = float(post.get('shipping_cost') or 0.0)
             stock_qty = float(post.get('stock_qty') or 0.0)
             description_sale = post.get('description_sale') or ''
             
             vals = {
                 'name': name,
                 'list_price': list_price,
+                'marketplace_promo_price': promo_price,
+                'marketplace_shipping_cost': shipping_cost,
                 'description_sale': description_sale,
                 'detailed_type': 'product',
                 'marketplace_seller_id': partner.id,
-                'is_published': True,
+                'website_published': False if not product_id else product.website_published,
             }
             if not product_id:
                 vals['marketplace_approved'] = False
@@ -450,3 +480,88 @@ class SellerPortalController(http.Controller):
             'active_menu': 'commissions',
         }
         return request.render('synara-marketplace.seller_commissions', values)
+
+    # ── Bulk Management ──
+    @http.route(
+        ['/mi/marketplace/productos/importar'],
+        type='http', auth='user', website=True,
+        methods=['GET', 'POST'],
+    )
+    def seller_products_import(self, **post):
+        partner, denied = self._ensure_seller()
+        if not partner:
+            return denied
+
+        if request.httprequest.method == 'POST' and post.get('csv_file'):
+            csv_file = post.get('csv_file')
+            try:
+                content = csv_file.read().decode('utf-8')
+                stream = io.StringIO(content)
+                reader = csv.DictReader(stream)
+                
+                created, updated, errors = 0, 0, []
+                ProductTemplate = request.env['product.template'].sudo()
+                
+                for row in reader:
+                    try:
+                        ref = row.get('referencia_interna', '').strip()
+                        name = row.get('nombre', '').strip()
+                        if not name and not ref:
+                            continue
+                            
+                        vals = {
+                            'name': name or ref,
+                            'list_price': float(row.get('precio', 0.0) or 0.0),
+                            'marketplace_promo_price': float(row.get('precio_oferta', 0.0) or 0.0),
+                            'marketplace_shipping_cost': float(row.get('envio', 0.0) or 0.0),
+                            'description_sale': row.get('descripcion', ''),
+                            'marketplace_seller_id': partner.id,
+                            'detailed_type': 'product',
+                            'marketplace_commission_percent': partner.seller_commission_percent,
+                        }
+                        
+                        product = False
+                        if ref:
+                            product = ProductTemplate.search([
+                                ('default_code', '=', ref),
+                                ('marketplace_seller_id', '=', partner.id)
+                            ], limit=1)
+                        
+                        if product:
+                            product.write(vals)
+                            updated += 1
+                        else:
+                            vals['default_code'] = ref
+                            vals['website_published'] = False
+                            ProductTemplate.create(vals)
+                            created += 1
+                            
+                    except Exception as e:
+                        errors.append(f"Error en fila {name or ref}: {str(e)}")
+                
+                msg = f"Importación finalizada: {created} creados, {updated} actualizados."
+                if errors:
+                    msg += f" Errores: {len(errors)}"
+                request.session['marketplace_product_flash'] = msg
+                return request.redirect('/mi/marketplace/productos')
+            except Exception as e:
+                _logger.error("CSV Import error: %s", e)
+                request.session['marketplace_product_flash'] = f"Error al procesar el archivo: {str(e)}"
+
+        return request.render('synara-marketplace.seller_products_import', {
+            'partner': partner,
+            'active_menu': 'products',
+        })
+
+    @http.route('/mi/marketplace/productos/plantilla_csv', type='http', auth='user')
+    def seller_products_template(self):
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['referencia_interna', 'nombre', 'precio', 'precio_oferta', 'envio', 'descripcion'])
+        writer.writerow(['REF001', 'Producto de ejemplo', '1500.00', '1200.00', '350.00', 'Descripción del producto'])
+        
+        csv_content = output.getvalue()
+        return request.make_response(csv_content, [
+            ('Content-Type', 'text/csv'),
+            ('Content-Disposition', 'attachment; filename=plantilla_productos.csv;')
+        ])

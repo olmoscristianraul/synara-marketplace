@@ -25,6 +25,18 @@ class ProductTemplate(models.Model):
         store=True,
         readonly=True,
     )
+    marketplace_promo_price = fields.Float(
+        string='Precio promocional',
+        help='Precio tachado para mostrar en oferta.',
+    )
+    marketplace_shipping_cost = fields.Float(
+        string='Costo de envío',
+        help='Costo de envío para este producto específico.',
+    )
+    marketplace_commission_percent = fields.Float(
+        string='Comisión (%)',
+        help='Comisión específica para este producto. Si es 0, se usa la del vendedor.',
+    )
 
     def action_marketplace_approve(self):
         """Admin approves product for marketplace publication."""

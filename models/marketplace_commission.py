@@ -59,7 +59,15 @@ class MarketplaceCommissionRule(models.Model):
         domain_base = [('active', '=', True)]
         category = product_template.categ_id if product_template else False
 
-        # 1. Seller + category
+        # 1. Seller override (CRITICAL: Prioritized as per user request)
+        if seller and seller.seller_commission_percent:
+            return seller.seller_commission_percent
+
+        # 2. Product-specific commission
+        if product_template and product_template.marketplace_commission_percent:
+            return product_template.marketplace_commission_percent
+
+        # 3. Seller + category rules
         if seller and category:
             rule = self.search(
                 domain_base + [
@@ -71,7 +79,7 @@ class MarketplaceCommissionRule(models.Model):
             if rule:
                 return rule.commission_percent
 
-        # 2. Seller only
+        # 4. Seller only rules
         if seller:
             rule = self.search(
                 domain_base + [
@@ -83,7 +91,7 @@ class MarketplaceCommissionRule(models.Model):
             if rule:
                 return rule.commission_percent
 
-        # 3. Category only
+        # 5. Category only rules
         if category:
             rule = self.search(
                 domain_base + [
@@ -94,10 +102,6 @@ class MarketplaceCommissionRule(models.Model):
             )
             if rule:
                 return rule.commission_percent
-
-        # 4. Seller override
-        if seller and seller.seller_commission_percent:
-            return seller.seller_commission_percent
 
         # 5. Global default
         IrConfig = self.env['ir.config_parameter'].sudo()

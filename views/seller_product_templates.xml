@@ -70,133 +70,155 @@
 
     <!-- Seller Products List -->
     <template id="seller_products_list" name="Mis Productos">
-        <t t-call="website.layout">
-            <div class="container py-4">
-                <div class="row">
-                    <div class="col-lg-3">
-                        <t t-call="synara-marketplace.seller_sidebar"/>
-                    </div>
-                    <div class="col-lg-9">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h2><i class="fa fa-cubes me-2"/>Mis productos</h2>
-                            <a href="/mi/marketplace/productos/nuevo" class="btn btn-primary">
-                                <i class="fa fa-plus me-2"/>Nuevo Producto
-                            </a>
-                        </div>
-                        
-                        <t t-if="flash">
-                            <div class="alert alert-success"><t t-esc="flash"/></div>
-                        </t>
-
-                        <t t-if="products">
-                            <div class="row">
-                                <t t-foreach="products" t-as="prod">
-                                    <div class="col-md-4 mb-4">
-                                        <div class="card h-100 shadow-sm">
-                                            <img t-attf-src="/web/image/product.template/#{prod.id}/image_1024" class="card-img-top" style="height: 200px; object-fit: contain; padding: 10px;" alt="Producto"/>
-                                            <div class="card-body">
-                                                <h5 class="card-title text-truncate" t-att-title="prod.name"><t t-esc="prod.name"/></h5>
-                                                <p class="card-text mb-1">
-                                                    <strong>Monto:</strong> <t t-esc="prod.list_price" t-options="{'widget': 'monetary', 'display_currency': prod.currency_id}"/>
-                                                </p>
-                                                <p class="card-text mb-2">
-                                                    <small class="text-muted">Stock disponible: <t t-esc="prod.qty_available"/></small>
-                                                </p>
-                                                <p class="card-text">
-                                                    <t t-if="prod.marketplace_approved">
-                                                        <span class="badge bg-success">Aprobado</span>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <span class="badge bg-warning text-dark">Pendiente por Admin</span>
-                                                    </t>
-                                                </p>
-                                            </div>
-                                            <div class="card-footer bg-white border-top-0 pt-0">
-                                                <a t-attf-href="/mi/marketplace/productos/editar/#{prod.id}" class="btn btn-outline-secondary w-100">
-                                                    <i class="fa fa-edit me-1"/> Editar
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </t>
-                            </div>
-                        </t>
-                        <t t-else="">
-                            <div class="alert alert-info py-5 text-center">
-                                <h4>Aún no tienes productos</h4>
-                                <p>Crea tu primer producto para empezar a vender en el Marketplace.</p>
-                            </div>
-                        </t>
-                    </div>
+        <t t-call="synara-marketplace.seller_layout">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fa fa-cubes me-2"/>Mis productos</h2>
+                <div class="d-flex gap-2">
+                    <a href="/mi/marketplace/productos/importar" class="btn btn-outline-primary">
+                        <i class="fa fa-upload me-1"/> Importar Masivo
+                    </a>
+                    <a href="/mi/marketplace/productos/nuevo" class="btn btn-primary shadow-sm px-4">
+                        <i class="fa fa-plus-circle me-1"/> Nuevo Producto
+                    </a>
                 </div>
             </div>
+            
+            <t t-if="flash">
+                <div class="alert alert-success"><t t-esc="flash"/></div>
+            </t>
+
+            <t t-if="products">
+                <div class="row">
+                    <t t-foreach="products" t-as="prod">
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 shadow-sm border-0 rounded-3">
+                                <img t-attf-src="/web/image/product.template/#{prod.id}/image_1024" class="card-img-top rounded-top-3" style="height: 200px; object-fit: contain; padding: 10px;" alt="Producto"/>
+                                <div class="card-body">
+                                    <h5 class="card-title text-truncate" t-att-title="prod.name"><t t-esc="prod.name"/></h5>
+                                    <p class="card-text mb-1 small text-muted">
+                                        Ref: <t t-esc="prod.default_code or 'N/A'"/>
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        <t t-if="prod.marketplace_promo_price">
+                                            <span class="text-decoration-line-through text-muted small me-2">
+                                                <t t-esc="prod.list_price" t-options="{'widget': 'monetary', 'display_currency': prod.currency_id}"/>
+                                            </span>
+                                            <span class="text-danger fw-bold">
+                                                <t t-esc="prod.marketplace_promo_price" t-options="{'widget': 'monetary', 'display_currency': prod.currency_id}"/>
+                                            </span>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-esc="prod.list_price" t-options="{'widget': 'monetary', 'display_currency': prod.currency_id}"/>
+                                        </t>
+                                    </p>
+                                    <p class="card-text mb-2">
+                                        <t t-if="'qty_available' in prod.fields_get()">
+                                            <small class="text-muted">Stock: <t t-esc="prod.qty_available"/></small>
+                                        </t>
+                                    </p>
+                                    <p class="card-text">
+                                        <t t-if="prod.marketplace_approved">
+                                            <span class="badge rounded-pill bg-success small">Publicado</span>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="badge rounded-pill bg-warning text-dark small">En revisión</span>
+                                        </t>
+                                    </p>
+                                </div>
+                                <div class="card-footer bg-white border-top-0 pt-0 pb-3">
+                                    <a t-attf-href="/mi/marketplace/productos/editar/#{prod.id}" class="btn btn-sm btn-outline-secondary w-100">
+                                        <i class="fa fa-edit me-1"/> Editar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="alert alert-info py-5 text-center rounded-3 shadow-sm border-0">
+                    <i class="fa fa-info-circle fa-3x mb-3 text-info opacity-50"/>
+                    <h4>Aún no tienes productos</h4>
+                    <p class="text-muted">Crea tu primer producto para empezar a vender.</p>
+                </div>
+            </t>
         </t>
     </template>
 
     <!-- Seller Product Form -->
     <template id="seller_product_form" name="Formulario de Producto">
-        <t t-call="website.layout">
-            <div class="container py-4">
-                <div class="row">
-                    <div class="col-lg-3">
-                        <t t-call="synara-marketplace.seller_sidebar"/>
-                    </div>
-                    <div class="col-lg-9">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h2>
-                                <t t-if="product.id">Editar Producto</t>
-                                <t t-else="">Nuevo Producto</t>
-                            </h2>
-                            <a href="/mi/marketplace/productos" class="btn btn-outline-secondary">
-                                <i class="fa fa-arrow-left me-2"/>Volver
-                            </a>
-                        </div>
+        <t t-call="synara-marketplace.seller_layout">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    <t t-if="product.id">Editar Producto</t>
+                    <t t-else="">Nuevo Producto</t>
+                </h2>
+                <a href="/mi/marketplace/productos" class="btn btn-outline-secondary">
+                    <i class="fa fa-arrow-left me-2"/>Volver
+                </a>
+            </div>
+            
+            <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+                <div class="card-body p-4 bg-light">
+                    <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         
-                        <div class="card shadow-sm border-0">
-                            <div class="card-body p-4 bg-light rounded">
-                                <form method="POST" enctype="multipart/form-data">
-                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-8">
-                                            <label class="form-label fw-bold">Nombre del producto *</label>
-                                            <input type="text" name="name" class="form-control" required="required" t-att-value="product.name if product.id else ''"/>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label fw-bold">Precio de Venta ($) *</label>
-                                            <input type="number" step="0.01" min="0" name="list_price" class="form-control" required="required" t-att-value="product.list_price if product.id else ''"/>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-4">
-                                            <label class="form-label fw-bold">Stock / Cantidad *</label>
-                                            <input type="number" step="1" min="0" name="stock_qty" class="form-control" required="required" t-att-value="current_stock" aria-describedby="stockHelp"/>
-                                            <div id="stockHelp" class="form-text">Actualiza tu cantidad física disponible. Al guardarlo se ajustará tu inventario real automáticamente de fondo.</div>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <label class="form-label fw-bold">Imagen principal</label>
-                                            <input type="file" name="image_1920" class="form-control" accept="image/*"/>
-                                            <t t-if="product.id and product.image_1920">
-                                                <div class="mt-2 text-muted small"><i class="fa fa-info-circle me-1"/>Sube una nueva foto si quieres reemplazar la existente.</div>
-                                            </t>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-4">
-                                        <label class="form-label fw-bold">Descripción (visible en tienda)</label>
-                                        <textarea name="description_sale" class="form-control" rows="5"><t t-esc="product.description_sale if product.id else ''"/></textarea>
-                                    </div>
-                                    
-                                    <div class="d-flex justify-content-end">
-                                        <button type="submit" class="btn btn-primary px-5 py-2">
-                                            <i class="fa fa-save me-2"/>Guardar Producto
-                                        </button>
-                                    </div>
-                                </form>
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label class="form-label fw-bold">Nombre del producto *</label>
+                                <input type="text" name="name" class="form-control bg-white" required="required" t-att-value="product.name if product.id else ''"/>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Referencia Interna (Código)</label>
+                                <input type="text" name="default_code" class="form-control bg-white" t-att-value="product.default_code if product.id else ''"/>
                             </div>
                         </div>
-                    </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Precio de Venta ($) *</label>
+                                <input type="number" step="0.01" min="0" name="list_price" class="form-control bg-white" required="required" t-att-value="product.list_price if product.id else ''"/>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Precio Oferta ($)</label>
+                                <input type="number" step="0.01" min="0" name="promo_price" class="form-control bg-white" t-att-value="product.marketplace_promo_price or ''"/>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Costo Envío ($)</label>
+                                <input type="number" step="0.01" min="0" name="shipping_cost" class="form-control bg-white" t-att-value="product.marketplace_shipping_cost or ''"/>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold">Comisión (%)</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control bg-light" readonly="readonly" t-att-value="product.marketplace_commission_percent or partner.seller_commission_percent"/>
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Stock Actual *</label>
+                                <input type="number" step="1" name="stock_qty" class="form-control bg-white" required="required" t-att-value="current_stock"/>
+                                <small class="text-muted">Ajuste automático al guardar.</small>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label fw-bold">Imagen principal</label>
+                                <input type="file" name="image_1920" class="form-control bg-white" accept="image/*"/>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Descripción para la tienda</label>
+                            <textarea name="description_sale" class="form-control bg-white" rows="4"><t t-esc="product.description_sale if product.id else ''"/></textarea>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg px-5 shadow-sm">
+                                <i class="fa fa-save me-2"/>Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </t>

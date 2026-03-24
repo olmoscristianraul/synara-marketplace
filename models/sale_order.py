@@ -25,6 +25,10 @@ class SaleOrder(models.Model):
         currency_field='currency_id',
         copy=False,
     )
+    marketplace_delivery_status = fields.Selection([
+        ('pending', 'Pendiente de entrega'),
+        ('shipped', 'En camino / Entregado'),
+    ], string='Estado entrega marketplace', default='pending', copy=False)
 
     # ── Override para inyectar metadata en la transacción ──
     def _prepare_payment_transaction_vals(self, **kwargs):
