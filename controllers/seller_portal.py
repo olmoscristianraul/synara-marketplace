@@ -185,7 +185,7 @@ class SellerPortalController(http.Controller):
             'total_commissions': total_commissions,
             'total_earnings': total_earnings,
             'pending_commissions': sum(
-                lines.filtered(lambda l: l.state == 'pending').mapped('commission_amount')
+                lines.filtered(lambda l: l.state != 'paid').mapped('commission_amount')
             ),
             'product_count': len(products),
             'products': products,
@@ -361,7 +361,51 @@ class SellerPortalController(http.Controller):
                 request.session['marketplace_order_flash'] = 'Factura subida y pedido marcado como Facturado.'
         return request.redirect(f'/mi/marketplace/pedidos/{order_id}')
 
-    # ── Products CRUD ──
+    @http.route(
+        ['/mi/marketplace/pedidos/bulk_status'],
+        type='http', auth='user', website=True, methods=['POST']
+    )
+    def seller_orders_bulk_status(self, **post):
+        partner, denied = self._ensure_seller()
+        if not partner: return denied
+        
+        order_ids_raw = post.get('order_ids', '')
+        new_status = post.get('status')
+        if not order_ids_raw or not new_status:
+            return request.redirect('/mi/marketplace/pedidos')
+            
+        try:
+            order_ids = [int(id_str) for id_str in order_ids_raw.split(',') if id_str.strip()]
+        except ValueError:
+            return request.redirect('/mi/marketplace/pedidos')
+            
+        if not order_ids or new_status not in ['shipped', 'cancelled', 'invoiced']:
+            return request.redirect('/mi/marketplace/pedidos')
+            
+        orders = request.env['sale.order'].sudo().search([
+            ('id', 'in', order_ids),
+            ('marketplace_seller_id', '=', partner.id)
+        ])
+        
+        if orders:
+            orders.write({'marketplace_delivery_status': new_status})
+            status_label = dict(orders._fields['marketplace_delivery_status'].selection).get(new_status)
+            for order in orders:
+                order.message_post(body=f"El vendedor ha cambiado el estado MASIVAMENTE a: {status_label}")
+                
+                # Logic for deliveries (same as individual)
+                if new_status == 'shipped' and hasattr(order, 'picking_ids'):
+                    pickings = order.picking_ids.filtered(lambda p: p.state not in ('done', 'cancel'))
+                    for picking in pickings:
+                        try:
+                            picking.action_assign()
+                            for move in picking.move_ids_without_package:
+                                move.quantity = move.product_uom_qty
+                            picking.button_validate()
+                        except: pass
+            
+            request.session['marketplace_product_flash'] = f'{len(orders)} pedidos actualizados a {status_label}.'
+        return request.redirect('/mi/marketplace/pedidos')
     @http.route(
         ['/mi/marketplace/productos'],
         type='http', auth='user', website=True,

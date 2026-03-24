@@ -135,6 +135,7 @@ class MarketplaceCommissionLine(models.Model):
         string='Nº pedido',
         related='sale_order_id.name',
         store=True,
+        compute_sudo=True,
     )
     sale_date = fields.Datetime(
         string='Fecha de venta',
@@ -160,12 +161,14 @@ class MarketplaceCommissionLine(models.Model):
         currency_field='currency_id',
         compute='_compute_commission_amount',
         store=True,
+        compute_sudo=True,
     )
     seller_amount = fields.Monetary(
         string='Monto vendedor',
         currency_field='currency_id',
         compute='_compute_commission_amount',
         store=True,
+        compute_sudo=True,
     )
     state = fields.Selection([
         ('pending', 'Pendiente'),
@@ -192,6 +195,13 @@ class MarketplaceCommissionLine(models.Model):
             line.commission_amount = commission
             line.seller_amount = (line.sale_amount or 0.0) - commission
 
+    def action_generate_invoices(self):
+        """Action to generate invoices for selected or all pending commission lines."""
+        lines_to_invoice = self.filtered(lambda l: l.state == 'pending')
+        if not lines_to_invoice:
+            return False
+        return self._generate_invoices(lines_to_invoice)
+
     # ── Monthly Invoice Generation ──
     @api.model
     def _cron_generate_monthly_commission_invoices(self):
@@ -199,16 +209,19 @@ class MarketplaceCommissionLine(models.Model):
         pending_lines = self.search([('state', '=', 'pending')])
         if not pending_lines:
             return
+        self._generate_invoices(pending_lines)
 
+    def _generate_invoices(self, lines):
+        """Internal logic to generate invoices grouped by seller."""
         # Group by seller
         sellers = {}
-        for line in pending_lines:
+        for line in lines:
             sellers.setdefault(line.seller_id.id, self.env['marketplace.commission.line'])
             sellers[line.seller_id.id] |= line
 
         AccountMove = self.env['account.move'].with_context(default_move_type='out_invoice')
 
-        for seller_id, lines in sellers.items():
+        for seller_id, seller_lines in sellers.items():
             seller = self.env['res.partner'].browse(seller_id)
             journal = self._get_commission_journal(seller)
             if not journal:
@@ -219,7 +232,7 @@ class MarketplaceCommissionLine(models.Model):
                 continue
 
             invoice_lines = []
-            for line in lines:
+            for line in seller_lines:
                 invoice_lines.append(Command.create({
                     'name': _('Comisión marketplace - Pedido %s') % line.sale_order_name,
                     'quantity': 1.0,
@@ -232,8 +245,8 @@ class MarketplaceCommissionLine(models.Model):
             invoice_vals = {
                 'move_type': 'out_invoice',
                 'partner_id': seller.id,
-                'company_id': lines[0].company_id.id,
-                'currency_id': lines[0].currency_id.id,
+                'company_id': seller_lines[0].company_id.id,
+                'currency_id': seller_lines[0].currency_id.id,
                 'journal_id': journal.id,
                 'invoice_date': fields.Date.context_today(self),
                 'invoice_origin': _('Comisiones Marketplace'),
@@ -242,7 +255,7 @@ class MarketplaceCommissionLine(models.Model):
             }
 
             invoice = AccountMove.create(invoice_vals)
-            lines.write({
+            seller_lines.sudo().write({
                 'state': 'invoiced',
                 'invoice_id': invoice.id,
             })
@@ -250,8 +263,9 @@ class MarketplaceCommissionLine(models.Model):
                 'Factura de comisiones %s generada para vendedor %s (%d líneas).',
                 invoice.name,
                 seller.display_name,
-                len(lines),
+                len(seller_lines),
             )
+        return True
 
     def _get_commission_journal(self, seller):
         """Find the appropriate sales journal for commission invoicing."""

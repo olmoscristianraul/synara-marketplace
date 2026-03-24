@@ -168,8 +168,8 @@
                 <div class="col-md-3">
                     <div class="card h-100 text-center border-0 shadow-sm rounded-3 bg-white">
                         <div class="card-body">
-                            <h6 class="card-title text-muted mb-1 small">Comisiones</h6>
-                            <h3 class="text-warning mb-0"><t t-esc="'${:,.2f}'.format(total_commissions)"/></h3>
+                            <h6 class="card-title text-muted mb-1 small">Comisiones Pendientes de Pago</h6>
+                            <h3 class="text-warning mb-0"><t t-esc="'${:,.2f}'.format(pending_commissions)"/></h3>
                         </div>
                     </div>
                 </div>
