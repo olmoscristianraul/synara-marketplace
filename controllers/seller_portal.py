@@ -306,31 +306,34 @@ class SellerPortalController(http.Controller):
         return request.render('synara-marketplace.seller_order_detail', values)
 
     @http.route(
-        ['/mi/marketplace/pedidos/<int:order_id>/marcar_entregado'],
+        ['/mi/marketplace/pedidos/<int:order_id>/estado'],
         type='http', auth='user', website=True, methods=['POST']
     )
-    def seller_order_mark_delivered(self, order_id, **post):
+    def seller_order_update_status(self, order_id, **post):
         partner, denied = self._ensure_seller()
         if not partner: return denied
         
         order = request.env['sale.order'].sudo().browse(order_id)
         if order.exists() and order.marketplace_seller_id.id == partner.id:
-            order.write({'marketplace_delivery_status': 'shipped'})
-            order.message_post(body="El vendedor ha marcado este pedido como entregado.")
-            
-            # Intentar procesar remitos si el módulo de stock está instalado
-            if hasattr(order, 'picking_ids'):
-                pickings = order.picking_ids.filtered(lambda p: p.state not in ('done', 'cancel'))
-                for picking in pickings:
-                    try:
-                        picking.action_assign()
-                        for move in picking.move_ids_without_package:
-                            move.quantity = move.product_uom_qty
-                        picking.button_validate()
-                    except Exception as e:
-                        _logger.warning('Marketplace Delivery Warning: %s', e)
-            
-            request.session['marketplace_order_flash'] = 'Pedido marcado como entregado.'
+            new_status = post.get('status')
+            if new_status in ['shipped', 'cancelled', 'invoiced']:
+                order.write({'marketplace_delivery_status': new_status})
+                status_label = dict(order._fields['marketplace_delivery_status'].selection).get(new_status)
+                order.message_post(body=f"El vendedor ha cambiado el estado a: {status_label}")
+                
+                # Logic for deliveries (same as before)
+                if new_status == 'shipped' and hasattr(order, 'picking_ids'):
+                    pickings = order.picking_ids.filtered(lambda p: p.state not in ('done', 'cancel'))
+                    for picking in pickings:
+                        try:
+                            picking.action_assign()
+                            for move in picking.move_ids_without_package:
+                                move.quantity = move.product_uom_qty
+                            picking.button_validate()
+                        except Exception as e:
+                            _logger.warning('Marketplace Delivery Warning: %s', e)
+                
+                request.session['marketplace_order_flash'] = f'Pedido actualizado a {status_label}.'
         return request.redirect(f'/mi/marketplace/pedidos/{order_id}')
 
     @http.route(
@@ -352,8 +355,10 @@ class SellerPortalController(http.Controller):
                     'res_model': 'sale.order',
                     'res_id': order.id,
                 })
-                order.message_post(body="El vendedor adjuntó la factura.", attachment_ids=[attachment.id])
-                request.session['marketplace_order_flash'] = 'Factura subida exitosamente.'
+                # Auto-transition to invoiced if requested or as a standard flow
+                order.write({'marketplace_delivery_status': 'invoiced'})
+                order.message_post(body="El vendedor adjuntó la factura y marcó el pedido como Facturado.", attachment_ids=[attachment.id])
+                request.session['marketplace_order_flash'] = 'Factura subida y pedido marcado como Facturado.'
         return request.redirect(f'/mi/marketplace/pedidos/{order_id}')
 
     # ── Products CRUD ──

@@ -67,6 +67,7 @@
                 <field name="seller_amount" sum="Total vendedor"/>
                 <field name="state" widget="badge"
                        decoration-success="state == 'invoiced'"
+                       decoration-info="state == 'paid'"
                        decoration-warning="state == 'pending'"/>
                 <field name="invoice_id"/>
             </list>
@@ -117,6 +118,8 @@
                         domain="[('state', '=', 'pending')]"/>
                 <filter string="Facturadas" name="filter_invoiced"
                         domain="[('state', '=', 'invoiced')]"/>
+                <filter string="Pagadas" name="filter_paid"
+                        domain="[('state', '=', 'paid')]"/>
                 <separator/>
                 <filter string="Este mes" name="filter_this_month"
                         domain="[('sale_date', '&gt;=', (context_today() - relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>

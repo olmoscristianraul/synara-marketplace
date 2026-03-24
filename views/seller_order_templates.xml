@@ -42,8 +42,14 @@
                                             <t t-if="order.marketplace_delivery_status == 'pending'">
                                                 <span class="badge rounded-pill bg-warning text-dark px-3">Pendiente Entrega</span>
                                             </t>
-                                            <t t-else="">
+                                            <t t-elif="order.marketplace_delivery_status == 'shipped'">
                                                 <span class="badge rounded-pill bg-success px-3">Entregado</span>
+                                            </t>
+                                            <t t-elif="order.marketplace_delivery_status == 'cancelled'">
+                                                <span class="badge rounded-pill bg-danger px-3">Cancelado</span>
+                                            </t>
+                                            <t t-elif="order.marketplace_delivery_status == 'invoiced'">
+                                                <span class="badge rounded-pill bg-info px-3">Facturado</span>
                                             </t>
                                         </td>
                                     </tr>
@@ -66,12 +72,38 @@
     <!-- Order Detail -->
     <template id="seller_order_detail" name="Detalle de pedido">
         <t t-call="synara-marketplace.seller_layout">
-            <h2 class="mb-4">
-                Pedido <t t-esc="order.name"/>
-                <span t-attf-class="badge rounded-pill ms-2 #{'bg-success' if order.marketplace_delivery_status == 'shipped' else 'bg-warning text-dark'}">
-                    <t t-esc="'Entregado' if order.marketplace_delivery_status == 'shipped' else 'Pendiente'"/>
-                </span>
-            </h2>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    Pedido <t t-esc="order.name"/>
+                    <t t-if="order.marketplace_delivery_status == 'pending'">
+                        <span class="badge rounded-pill bg-warning text-dark ms-2">Pendiente</span>
+                    </t>
+                    <t t-elif="order.marketplace_delivery_status == 'shipped'">
+                        <span class="badge rounded-pill bg-success ms-2">Entregado</span>
+                    </t>
+                    <t t-elif="order.marketplace_delivery_status == 'cancelled'">
+                        <span class="badge rounded-pill bg-danger ms-2">Cancelado</span>
+                    </t>
+                    <t t-elif="order.marketplace_delivery_status == 'invoiced'">
+                        <span class="badge rounded-pill bg-info ms-2">Facturado</span>
+                    </t>
+                </h2>
+                <div class="btn-group shadow-sm">
+                    <t t-if="order.marketplace_delivery_status == 'pending'">
+                        <button class="btn btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#modalDelivered">
+                            <i class="fa fa-check me-1"/> Marcar Entregado
+                        </button>
+                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalCancel">
+                            <i class="fa fa-times me-1"/> Cancelar
+                        </button>
+                    </t>
+                    <t t-if="order.marketplace_delivery_status in ['pending', 'shipped']">
+                        <button class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#modalInvoice">
+                            <i class="fa fa-file-text me-1"/> Facturar
+                        </button>
+                    </t>
+                </div>
+            </div>
 
             <t t-if="flash">
                 <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4">
@@ -177,10 +209,34 @@
                                         ¿Estás seguro que deseas marcar este pedido como entregado? Esto notificará a la plataforma que el producto ya fue despachado.
                                     </div>
                                     <div class="modal-footer">
-                                        <form method="POST" t-attf-action="/mi/marketplace/pedidos/#{order.id}/marcar_entregado">
+                                        <form method="POST" t-attf-action="/mi/marketplace/pedidos/#{order.id}/estado">
                                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <input type="hidden" name="status" value="shipped"/>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                                             <button type="submit" class="btn btn-success">Confirmar Entrega</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Cancelar -->
+                        <div class="modal fade" id="modalCancel" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content text-start">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">¿Cancelar este pedido?</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Esta acción no se puede deshacer. Se notificará a la plataforma que el pedido no podrá ser entregado.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form method="POST" t-attf-action="/mi/marketplace/pedidos/#{order.id}/estado">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <input type="hidden" name="status" value="cancelled"/>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                            <button type="submit" class="btn btn-danger">Confirmar Cancelación</button>
                                         </form>
                                     </div>
                                 </div>

@@ -27,7 +27,9 @@ class SaleOrder(models.Model):
     )
     marketplace_delivery_status = fields.Selection([
         ('pending', 'Pendiente de entrega'),
-        ('shipped', 'En camino / Entregado'),
+        ('shipped', 'Entregado'),
+        ('cancelled', 'Cancelado'),
+        ('invoiced', 'Facturado'),
     ], string='Estado entrega marketplace', default='pending', copy=False)
 
     # ── Override para inyectar metadata en la transacción ──

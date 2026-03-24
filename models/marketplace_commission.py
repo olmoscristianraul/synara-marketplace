@@ -170,6 +170,7 @@ class MarketplaceCommissionLine(models.Model):
     state = fields.Selection([
         ('pending', 'Pendiente'),
         ('invoiced', 'Facturada'),
+        ('paid', 'Pago'),
     ], string='Estado', default='pending', tracking=True, index=True)
     invoice_id = fields.Many2one(
         'account.move',

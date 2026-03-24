@@ -16,12 +16,22 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card h-100 text-center border-0 shadow-sm rounded-3 bg-white">
                             <div class="card-body">
                                 <h6 class="card-title text-muted mb-1 small text-uppercase fw-bold">Total facturado</h6>
                                 <h4 class="text-success mb-0">
                                     <t t-esc="'${:,.2f}'.format(sum(commission_lines.filtered(lambda l: l.state == 'invoiced').mapped('commission_amount')))"/>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card h-100 text-center border-0 shadow-sm rounded-3 bg-white">
+                            <div class="card-body">
+                                <h6 class="card-title text-muted mb-1 small text-uppercase fw-bold">Liquidadas (Pago)</h6>
+                                <h4 class="text-info mb-0">
+                                    <t t-esc="'${:,.2f}'.format(sum(commission_lines.filtered(lambda l: l.state == 'paid').mapped('commission_amount')))"/>
                                 </h4>
                             </div>
                         </div>
@@ -61,8 +71,14 @@
                                             <t t-if="line.state == 'pending'">
                                                 <span class="badge rounded-pill bg-warning text-dark">Pendiente</span>
                                             </t>
-                                            <t t-else="">
+                                            <t t-elif="line.state == 'invoiced'">
                                                 <span class="badge rounded-pill bg-success">Facturada</span>
+                                                <t t-if="line.invoice_id">
+                                                    <small class="d-block text-muted mt-1"><t t-esc="line.invoice_id.name"/></small>
+                                                </t>
+                                            </t>
+                                            <t t-elif="line.state == 'paid'">
+                                                <span class="badge rounded-pill bg-info">Pago</span>
                                             </t>
                                         </td>
                                     </tr>
